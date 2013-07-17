@@ -22,12 +22,34 @@
 	<tbody>
 	{% for restaurant in table_data %}
 		<tr>
+			<td>
+				{{ restaurant.1.restaurant.name }}, {{ restaurant.1.restaurant.post_code.name }}
+			</td>
 			{% for user_review in restaurant %}
 			<td>
-				<div id={% if user_review.review %}{{ user_review.id}}{% else %}{{ user_review.reviewer.id }}-{{ user_review.restaurant.id }} {% endif %}
+				<div class={% if user_review.review and user_review.good %}
+				review_exists_good
+				{% elif user_review.review and not user_review.good %}
+				review_exists_bad
+				{% else %}
+				no_review
+				{% endif %}
+				>
 
-				 class={% if user_review.reviewer == this_user %}edit{% endif %} name={{ user_review.id}}>
-					{% if user_review.review %}{{ user_review.review }}{% else %} No review yet {% endif %}
+					<div 	
+						id={% if user_review.review %}{{ user_review.id}}{% else 	%}{{ user_review.reviewer.id }}-{{ user_review.restaurant.id }} {% endif %}
+
+					 	class={% if user_review.reviewer == this_user %}
+					 			edit
+					 			{% endif %} 
+					 			name={{ user_review.id}}
+					>
+
+						{% if user_review.review %}{{ user_review.review }}
+						{% elif user_review.reviewer == this_user %} Click to add review 
+						{% else %}	
+						{% endif %}
+					</div>
 				</div>
 			</td>
 			{% endfor %}

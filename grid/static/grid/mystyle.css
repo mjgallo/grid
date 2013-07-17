@@ -3,3 +3,6 @@
 }
 
 .edit {background-color: yellow;}
+.no_review {color: grey;}
+.review_exists_good {color: blue;}
+.review_exists_bad {color: orange;}

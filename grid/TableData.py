@@ -43,7 +43,7 @@ class TableData:
 		self.all_users = User.objects.all()
 		table_list = []
 		for restaurant in self.all_restaurants:
-			restaurant_list = [{'review': restaurant.name}]
+			restaurant_list = []
 			for user in self.all_users:
 				try:
 				    review = Review.objects.get(restaurant=restaurant, reviewer=user)
