@@ -3,10 +3,22 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Grid</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/grid/mystyle.css">	
 	<script src="/static/grid/jquery-1.10.2.js" type="text/javascript"></script>
-	<script src="/static/grid/jquery.jeditable.js" type="text/javascript"></script>
-	<script src="/static/grid/custom.js" type="text/javascript"></script>
-	<link rel="stylesheet" type="text/css" href="/static/grid/mystyle.css">
+	<!--<script src="/static/grid/jquery.jeditable.js" type="text/javascript"></script>
+<script src="/static/grid/custom.js" type="text/javascript"></script>
+-->
+	
+    <!-- Bootstrap -->
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" type="text/css">
+    <link href="/static/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css">
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+    <script src="/static/grid/myscript.js"></script>
+
+
 </head>
 <h1>welcome {{ this_user.username }}</h1>
 <table border="1" class=topics>
@@ -39,6 +51,11 @@
 					<div 	
 						id={% if user_review.review %}{{ user_review.id}}{% else 	%}{{ user_review.reviewer.id }}-{{ user_review.restaurant.id }} {% endif %}
 
+						data-type="textarea"
+						data-pk="1"
+						data-url="/grid/update/"
+						data-title="Write a review"
+
 					 	class={% if user_review.reviewer == this_user %}
 					 			edit
 					 			{% endif %} 
@@ -46,7 +63,7 @@
 					>
 
 						{% if user_review.review %}{{ user_review.review }}
-						{% elif user_review.reviewer == this_user %} Click to add review 
+						{% elif user_review.reviewer == this_user %} Add your review! 
 						{% else %}	
 						{% endif %}
 					</div>
@@ -55,6 +72,13 @@
 			{% endfor %}
 		</tr>
 	{% endfor %}
+	<tr>
+		<td>
+			<div class=edit id="new_rest" data-type="text" data-pk="1" data-url="/grid/new_restaurant/" data-title="Enter username">
+				Add new restaurant
+			</div>
+		</td>
+	</tr>
 	</tbody>
 </table>
 

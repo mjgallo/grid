@@ -36,7 +36,7 @@ def update(request):
             this_review = None
             new_review = None
             try:
-                div_id = int(request.POST['id'])
+                div_id = int(request.POST['name'])
                 try: 
                     this_review = Review.objects.get(pk=div_id)
                 except (KeyError, Review.DoesNotExist):
@@ -45,7 +45,7 @@ def update(request):
                 this_review.review = new_review
                 this_review.save()
             except (ValueError): #no review yet, div_id is 'user_id-restaurant_id'
-                ident_list = string.split(request.POST['id'], '-')
+                ident_list = string.split(request.POST['name'], '-')
                 print ident_list
                 new_review_object = Review(restaurant=Restaurant.objects.get(pk=int(ident_list[1])),
                                         review=request.POST['value'],
@@ -73,3 +73,6 @@ def sort(request):
         return HttpResponseRedirect(reverse('grid:detail', kwargs={'filter':postcode}))
     else:
         return HttpResponse('not logged in')
+
+def newRestaurant(request):
+    print "Test"

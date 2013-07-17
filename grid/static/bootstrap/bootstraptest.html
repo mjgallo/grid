@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="bootstrap-editable/js/bootstrap-editable.js"></script>
+    <script>
+
+          $.fn.editable.defaults.mode = 'inline';
+
+          $(document).ready(function() {
+        $('#username').editable();
+    });
+    </script>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+
+    <a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">superuser</a>
+  </body>
+</html>
