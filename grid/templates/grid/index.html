@@ -1,0 +1,6 @@
+<ul>
+{% for review in list_of_all_reviews %}
+	<li><a href="/grid/{{ review.id }}/update">{{ review.review }}</a></li>
+	{% endfor %}
+</ul>
+
