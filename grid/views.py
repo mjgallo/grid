@@ -36,6 +36,8 @@ def update(request):
             this_review = None
             new_review = None
             try:
+                for key, value in request.POST.iteritems():
+                    print (key + ' ' + value)
                 div_id = int(request.POST['name'])
                 try: 
                     this_review = Review.objects.get(pk=div_id)

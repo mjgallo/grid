@@ -1,8 +1,12 @@
 $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
-    $('.edit').editable();
-    $('a').on('click', function(e) {e.preventDefault(); return true;});
+    $('.edit').editable({
+    	type:'textarea',
+    	showbuttons: 'bottom',
+    });
+
+    $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
 });
 
 var page = '<img src="https://si0.twimg.com/profile_images/1370359848/KatrinaKBowden_bigger.jpg"/>'
@@ -39,8 +43,7 @@ query.push(k + '=' + encodeURIComponent(v));
   return '<img src="' + src + '" />';
 }
 $(document).ready(function() {
-
-$('.showmap').click(function() {
-			$(this).popover('toggle');
-		});
+	$('.showmap').click(function() {
+		$(this).popover('toggle');
+	});
 });

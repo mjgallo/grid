@@ -2966,7 +2966,7 @@ $(function(){
         @property inputclass
         @default input-large
         **/
-        inputclass: 'input-large',
+        inputclass: 'input-medium',
         /**
         Placeholder attribute of input. Shown when input is empty.
 

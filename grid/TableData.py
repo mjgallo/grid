@@ -47,7 +47,7 @@ class TableData:
 			for user in self.all_users:
 				try:
 				    review = Review.objects.get(restaurant=restaurant, reviewer=user)
-				    restaurant_list.append({'review':review.review, 'restaurant':restaurant,'reviewer':user, 'good':review.good})
+				    restaurant_list.append({'review':review.review, 'id':review.id, 'restaurant':restaurant,'reviewer':user, 'good':review.good})
 				except Review.DoesNotExist:# if no review exists, just add reviewer so that box is editable
 					restaurant_list.append({'reviewer':user, 'restaurant':restaurant})
 			table_list.append(restaurant_list)
