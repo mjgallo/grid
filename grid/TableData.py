@@ -35,7 +35,7 @@ class TableData:
 			except ObjectDoesNotExist:
 				remove_space = filter.replace("_", "")
 				postcode_obj = Postcode.objects.get(name=remove_space)
-			self.all_restaurants = Restaurant.objects.all().distance(
+			self.all_restaurants = Restaurant.objects.distance(
 									postcode_obj.location, field_name='post_code__location').order_by('distance')
 		else:
 			print 'could not find filter'
@@ -47,7 +47,7 @@ class TableData:
 			for user in self.all_users:
 				try:
 				    review = Review.objects.get(restaurant=restaurant, reviewer=user)
-				    restaurant_list.append(review)
+				    restaurant_list.append({'review':review.review, 'restaurant':restaurant,'reviewer':user, 'good':review.good})
 				except Review.DoesNotExist:# if no review exists, just add reviewer so that box is editable
 					restaurant_list.append({'reviewer':user, 'restaurant':restaurant})
 			table_list.append(restaurant_list)

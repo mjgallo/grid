@@ -1,7 +1,3 @@
-.topics tr {
- 	line-height: 50px; 
-}
-
 .edit {background-color: yellow;}
 .no_review {color: grey;}
 .review_exists_good {color: blue;}

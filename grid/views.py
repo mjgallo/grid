@@ -15,9 +15,9 @@ def detail(request, filter=None):
     if request.user.is_authenticated():
         reviewers = User.objects.all().order_by('username')
         table = TableData(filter)
-        table_data = table.getTableData
-        all_users = table.getUserSequence
-        all_restaurants = table.getRestaurantSequence
+        table_data = table.getTableData()
+        all_users = table.getUserSequence()
+        all_restaurants = table.getRestaurantSequence()
         template = loader.get_template('grid/details.html')
         context = RequestContext(request, {
             'all_users': all_users,
@@ -75,4 +75,23 @@ def sort(request):
         return HttpResponse('not logged in')
 
 def newRestaurant(request):
-    print "Test"
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            rest_name = request.POST['value[city]']
+            address = request.POST['value[street]']
+            post_code = request.POST['value[building]']
+            post_obj = None
+            try:
+                post_obj = Postcode.objects.get(name=post_code)
+            except (KeyError, Postcode.DoesNotExist):
+                no_spaces = post_code.replace(" ", "")
+                try:
+                    post_obj = Postcode.objects.get(name=no_spaces)
+                except (KeyError, Postcode.DoesNotExist):
+                    HttpResponse('Postcode not in system')
+            rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj)
+            rest_obj.save()
+            return HttpResponseRedirect(reverse('grid:detailnofilter'))
+        return HttpResponse('Did not use POST method')
+    else:
+        return HttpResponse('User is not authenticated to update')
