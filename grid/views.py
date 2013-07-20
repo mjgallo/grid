@@ -35,6 +35,7 @@ def update(request):
         if request.method == 'POST':
             this_review = None
             new_review = None
+            good=None
             try:
                 for key, value in request.POST.iteritems():
                     print (key + ' ' + value)
@@ -44,14 +45,17 @@ def update(request):
                 except (KeyError, Review.DoesNotExist):
                     print 'Review for some reason does not exist'
                 new_review = request.POST['value']
+                good = True if request.POST['good']=='good' else False
                 this_review.review = new_review
+                this_review.good=good
                 this_review.save()
             except (ValueError): #no review yet, div_id is 'user_id-restaurant_id'
                 ident_list = string.split(request.POST['name'], '-')
+                good = True if request.POST['good']=='good' else False                
                 print ident_list
                 new_review_object = Review(restaurant=Restaurant.objects.get(pk=int(ident_list[1])),
                                         review=request.POST['value'],
-                                        good=True,
+                                        good=good,
                                         reviewer=User.objects.get(pk=int(ident_list[0])),
                                         )
                 new_review_object.save()
@@ -66,9 +70,9 @@ def sort(request):
     if request.user.is_authenticated():
         print 'here1'
         postcode=None
-        if request.method=='GET':
+        if request.method=='POST':
             print 'here2'
-            postcode = request.GET['postcode']
+            postcode = request.POST['value']
             postcode = postcode.replace(" ", "_")
         else:
             print 'Didnt say anything'

@@ -39,7 +39,12 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         },
         initButtons: function() {
             var $btn = this.$form.find('.editable-buttons');
-            $btn.append($.fn.editableform.buttons);
+            if(this.options.number === 2) {
+                $btn.append($.fn.editableform.buttons);
+            }
+            if(this.options.number === 3) {
+                $btn.append($.fn.editableform.threebuttons);
+            }
             if(this.options.showbuttons === 'bottom') {
                 $btn.addClass('editable-buttons-bottom');
             }
@@ -84,6 +89,7 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             this.$form.find('div.editable-input').append(this.input.$tpl);            
 
             //append form to container
+            this.$form.prop('id', "submissionform");
             this.$div.append(this.$form);
             
             //render input
@@ -99,17 +105,25 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                 
                 if(this.input.error) {
                     this.error(this.input.error);
-                    this.$form.find('.editable-submit').attr('disabled', true);
+                    this.$form.find('.editable-submit, .editable-bad, .editable-good').attr('disabled', true);
                     this.input.$input.attr('disabled', true);
                     //prevent form from submitting
                     this.$form.submit(function(e){ e.preventDefault(); });
                 } else {
                     this.error(false);
+                    $('input[type="submit"]').on('click', function(){
+                        this.$form.data('button', this.name);
+                    });
                     this.input.$input.removeAttr('disabled');
-                    this.$form.find('.editable-submit').removeAttr('disabled');
+                    var myInput = this.$form;
+                    this.$form.find('.editable-submit, .editable-bad, editable-good').removeAttr('disabled');
                     this.input.value2input(this.value);
+                    var editform = this;
                     //attach submit handler
-                    this.$form.submit($.proxy(this.submit, this));
+                    
+                    $('#submissionform button[type="submit"]').click(function() {
+                        editform.$form.submit({good:$(this).attr("name")},$.proxy(editform.submit, editform));
+                    });
                 }
 
                 /**        
@@ -197,10 +211,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         submit: function(e) {
             e.stopPropagation();
             e.preventDefault();
-            
             var error,
                 newValue = this.input.input2value(); //get new value from input
-
             //validation
             if (error = this.validate(newValue)) {
                 this.error(error);
@@ -223,17 +235,19 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
 
             //convert value for submitting to server
             var submitValue = this.input.value2submit(newValue);
-            
             this.isSaving = true;
-            
+            console.log('before when');
             //sending data to server
-            $.when(this.save(submitValue))
+            $.when(this.save(submitValue, e.data.good))
             .done($.proxy(function(response) {
                 this.isSaving = false;
-
+                console.log('after when');
                 //run success callback
                 var res = typeof this.options.success === 'function' ? this.options.success.call(this.options.scope, response, newValue) : null;
 
+                if(e.data.good==='good'){
+                    console.log(this);
+                }
                 //if success callback returns false --> keep form open and do not activate input
                 if(res === false) {
                     this.error(false);
@@ -271,7 +285,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                     if(params.newValue === 'username') {...}
                 });
                 **/
-                this.$div.triggerHandler('save', {newValue: newValue, submitValue: submitValue, response: response});
+                console.log(this.$div);
+                this.$div.triggerHandler('save', {newValue: newValue, submitValue: submitValue, response: response, good: e.data.good});
             }, this))
             .fail($.proxy(function(xhr) {
                 this.isSaving = false;
@@ -288,10 +303,10 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             }, this));
         },
 
-        save: function(submitValue) {
+        save: function(submitValue, good) {
             //try parse composite pk defined as json string in data-pk 
             this.options.pk = $.fn.editableutils.tryParseJson(this.options.pk, true); 
-            
+            console.log('save funct');
             var pk = (typeof this.options.pk === 'function') ? this.options.pk.call(this.options.scope) : this.options.pk,
             /*
               send on server in following cases:
@@ -308,7 +323,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                 params = {
                     name: this.options.name || '',
                     value: submitValue,
-                    pk: pk 
+                    pk: pk, 
+                    good: good,
                 };
 
                 //additional params
@@ -357,8 +373,10 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         setValue: function(value, convertStr) {
             if(convertStr) {
                 this.value = this.input.str2value(value);
+                console.log('test');
             } else {
                 this.value = value;
+                console.log('else');
             }
             
             //if form is visible, update input
@@ -603,7 +621,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
 
     //buttons
     $.fn.editableform.buttons = '<button type="submit" class="editable-submit">ok</button>'+
-    '<button type="button" class="editable-cancel">cancel</button>';      
+    '<button type="button" class="editable-cancel">cancel</button>'; 
+
 
     //error class attached to control-group
     $.fn.editableform.errorGroupClass = null;  
@@ -1805,11 +1824,18 @@ Makes editable any HTML element on the page. Applied as jQuery method.
                     this.$element.addClass(this.options.unsavedclass);                    
                 }
             }
-            
+            console.log(params.good);
             //highlight when saving
             if(this.options.highlight) {
                 var $e = this.$element,
                     $bgColor = $e.css('background-color');
+
+                if(params.good==='good'){
+                    $e.css('color', '#0044cc');
+                }
+                else {
+                    $e.css('color', 'orange');
+                }
                     
                 $e.css('background-color', this.options.highlight);
                 setTimeout(function(){
@@ -2209,7 +2235,7 @@ Makes editable any HTML element on the page. Applied as jQuery method.
         @since 1.4.5        
         @default #FFFF80 
         **/
-        highlight: '#FFFF80'        
+        highlight: 'purple'//'#FFFF80'        
     };
     
 }(window.jQuery));
@@ -2333,6 +2359,7 @@ To create your own input you can inherit from this class.
        input2value: function() { 
            return this.$input.val();
        }, 
+
 
        /**
         Activates input. For text it sets focus.
@@ -4349,11 +4376,34 @@ Editableform based on Twitter Bootstrap
     $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="icon-ok icon-white"></i></button>'+
                                 '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';         
     
+
     //error classes
     $.fn.editableform.errorGroupClass = 'error';
     $.fn.editableform.errorBlockClass = null;    
     
 }(window.jQuery));
+
+(function ($) {
+    "use strict";
+    
+    $.extend($.fn.editableform.Constructor.prototype, {
+         initTemplateThreeButtons: function() {
+            this.$form = $($.fn.editableform.template); 
+            this.$form.find('.editable-error-block').addClass('help-block');
+         }
+    });    
+    
+    //buttons
+    $.fn.editableform.threebuttons = '<button type="submit" id="yomamma" name="good" class="btn btn-primary editable-submit"><i class="icon-thumbs-up icon-white"></i></button>'+
+                                '<button type="submit" id="yodadda" name="bad" class="btn editable-bad"><i class="icon-thumbs-down"></i></button>'+
+                                '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';         
+    
+    //error classes
+    $.fn.editableform.errorGroupClass = 'error';
+    $.fn.editableform.errorBlockClass = null;    
+    
+}(window.jQuery));
+
 /**
 * Editable Popover 
 * ---------------------

@@ -2,13 +2,14 @@ $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
     $('.edit').editable({
-    	type:'textarea',
     	showbuttons: 'bottom',
+    	number: 3,
+    	savenochange:true,
+    	highlight:true
     });
 
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
 });
-
 var page = '<img src="https://si0.twimg.com/profile_images/1370359848/KatrinaKBowden_bigger.jpg"/>'
 $(document).ready(function() {
 	$('.showmap').popover( {

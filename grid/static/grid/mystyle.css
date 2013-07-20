@@ -1,7 +1,7 @@
-.edit {background-color: yellow;}
-.no_review {color: grey;}
+.edit {}
+.no_review {color: gray;}
 .review_exists_good {
-	color: blue;
+	color: #0044cc;
 }
 .review_exists_bad {color: orange;}
 
