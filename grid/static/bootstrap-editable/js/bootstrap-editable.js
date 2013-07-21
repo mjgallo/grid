@@ -4395,7 +4395,7 @@ Editableform based on Twitter Bootstrap
     
     //buttons
     $.fn.editableform.threebuttons = '<button type="submit" id="yomamma" name="good" class="btn btn-primary editable-submit"><i class="icon-thumbs-up icon-white"></i></button>'+
-                                '<button type="submit" id="yodadda" name="bad" class="btn editable-bad"><i class="icon-thumbs-down"></i></button>'+
+                                '<button type="submit" id="yodadda" name="bad" class="btn editable-bad"><i class="icon-thumbs-down icon-white"></i></button>'+
                                 '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';         
     
     //error classes

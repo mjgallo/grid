@@ -70,8 +70,8 @@
 
 /*for jquery-ui buttons need set height to look more pretty*/
 .editable-buttons button.ui-button-icon-only {
-   height: 24px; 
-   width: 30px;
+   height: 24px; /*24px*/
+   width: 30px;   /*30px*/
 }
 
 .editableform-loading {

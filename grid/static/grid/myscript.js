@@ -5,7 +5,12 @@ $(document).ready(function() {
     	showbuttons: 'bottom',
     	number: 3,
     	savenochange:true,
-    	highlight:true
+    	highlight:true,
+    });
+
+   $('.search').editable({
+      showbuttons: 'bottom',
+      number: 2,
     });
 
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});

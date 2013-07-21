@@ -5,6 +5,9 @@
 }
 .review_exists_bad {color: orange;}
 
+#searchbox {
+}
+
 .rows {
 	height:140px;
 	max-height: 140px;

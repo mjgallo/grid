@@ -103,15 +103,17 @@ Filter by postcode
 			{% endfor %}
 		</tr>
 	{% endfor %}
-	<tr>
-		<td>
+	<tr id="searchrow">
+		<td id="searchbox" colspan={{ all_users|length|add:"1" }} >
 
-<a href="#" id="restaurant" data-type="address" data-pk="1" data-original-title="Please, fill address" class="edit" style="display: inline;" data-url="/grid/add_restaurant/"><b>Add a restaurant</b></a>			
-
+<!--<a href="#" id="restaurant" data-type="address" data-pk="1" data-original-title="Please, fill address" class="search" style="display: inline;" data-url="/grid/add_restaurant/"><b>Add a restaurant</b></a>			
+-->
+<form class="form-search" style="margin-top:10px;margin-bottom:10px">
+  <input type="text" placeholder="Add a restaurant" class="input-medium search-query">
+  <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
+</form>
 		</td>
-		{% for user in all_users %}
-		<td></td>
-		{% endfor %}
+
 	</tr>
 	</tbody>
 </table>
