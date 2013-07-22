@@ -10,6 +10,7 @@ from django_tables2 import RequestConfig
 from grid.tables import RestaurantTable
 from postcodes.models import Postcode
 import string
+import json
 
 def detail(request, filter=None):
     if request.user.is_authenticated():
@@ -83,9 +84,14 @@ def sort(request):
 def newRestaurant(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            rest_name = request.POST['value[city]']
-            address = request.POST['value[street]']
-            post_code = request.POST['value[building]']
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                print key
+                rest_dict = json.loads(key)
+                print rest_dict           
+            rest_name = rest_dict['name']
+            address = rest_dict['address']
+            post_code = rest_dict['postcode']
             post_obj = None
             try:
                 post_obj = Postcode.objects.get(name=post_code)
@@ -97,7 +103,7 @@ def newRestaurant(request):
                     HttpResponse('Postcode not in system')
             rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj)
             rest_obj.save()
-            return HttpResponseRedirect(reverse('grid:detailnofilter'))
+            return HttpResponse(json.dumps(rest_dict))
         return HttpResponse('Did not use POST method')
     else:
         return HttpResponse('User is not authenticated to update')

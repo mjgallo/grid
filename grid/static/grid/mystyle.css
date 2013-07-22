@@ -10,11 +10,11 @@
 
 .rows {
 	height:140px;
-	max-height: 140px;
+	max-height:140px;
 }
 .reviewbox {
-  width: 160px;
-  max-width: 160px;
+  width:160px;
+  max-width:160px;
   vertical-align=top;
   overflow: auto;
 }
@@ -25,4 +25,9 @@
   white-space: -pre-wrap; /* Opera 4-6 */
   white-space: -o-pre-wrap; /* Opera 7 */
   word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+#searchbox {
+  max-width:280px;
+  width:280px;
 }
