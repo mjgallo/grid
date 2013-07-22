@@ -14,7 +14,7 @@ class Command(BaseCommand):
 		post1=None
 		try:
 			post1 = Postcode.objects.get(name=postcode1)
-		except(DoesNotExist):
+		except(ObjectDoesNotExist):
 			remove_space = postcode1.replace(" ", "")
 			post1 = Postcode.objects.get(name=remove_space)
 

@@ -13,9 +13,18 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('post_code', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('post_code', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['postcodes.Postcode'])),
         ))
         db.send_create_signal(u'grid', ['Restaurant'])
+
+        # Adding M2M table for field users_interested on 'Restaurant'
+        m2m_table_name = db.shorten_name(u'grid_restaurant_users_interested')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('restaurant', models.ForeignKey(orm[u'grid.restaurant'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['restaurant_id', 'user_id'])
 
         # Adding model 'Review'
         db.create_table(u'grid_review', (
@@ -27,13 +36,38 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'grid', ['Review'])
 
+        # Adding model 'GridGroup'
+        db.create_table(u'grid_gridgroup', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('founder', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grid_group_owner', unique=True, to=orm['auth.User'])),
+        ))
+        db.send_create_signal(u'grid', ['GridGroup'])
+
+        # Adding M2M table for field members on 'GridGroup'
+        m2m_table_name = db.shorten_name(u'grid_gridgroup_members')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('gridgroup', models.ForeignKey(orm[u'grid.gridgroup'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['gridgroup_id', 'user_id'])
+
 
     def backwards(self, orm):
         # Deleting model 'Restaurant'
         db.delete_table(u'grid_restaurant')
 
+        # Removing M2M table for field users_interested on 'Restaurant'
+        db.delete_table(db.shorten_name(u'grid_restaurant_users_interested'))
+
         # Deleting model 'Review'
         db.delete_table(u'grid_review')
+
+        # Deleting model 'GridGroup'
+        db.delete_table(u'grid_gridgroup')
+
+        # Removing M2M table for field members on 'GridGroup'
+        db.delete_table(db.shorten_name(u'grid_gridgroup_members'))
 
 
     models = {
@@ -73,12 +107,19 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'grid.gridgroup': {
+            'Meta': {'object_name': 'GridGroup'},
+            'founder': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_owner'", 'unique': 'True', 'to': u"orm['auth.User']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'members': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'})
+        },
         u'grid.restaurant': {
             'Meta': {'object_name': 'Restaurant'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'post_code': ('django.db.models.fields.CharField', [], {'max_length': '10'})
+            'post_code': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['postcodes.Postcode']"}),
+            'users_interested': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'})
         },
         u'grid.review': {
             'Meta': {'object_name': 'Review'},
@@ -87,6 +128,12 @@ class Migration(SchemaMigration):
             'restaurant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grid.Restaurant']"}),
             'review': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})
+        },
+        u'postcodes.postcode': {
+            'Meta': {'object_name': 'Postcode'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.contrib.gis.db.models.fields.PointField', [], {}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '8', 'db_index': 'True'})
         }
     }
 

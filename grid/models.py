@@ -9,6 +9,7 @@ class Restaurant(geomodels.Model):
 	name = geomodels.CharField(max_length=150)
 	address = geomodels.CharField(max_length=100)
 	post_code = geomodels.ForeignKey(Postcode)
+	users_interested = models.ManyToManyField(User)
 
 	objects = geomodels.GeoManager()
 
@@ -26,3 +27,9 @@ class Review(geomodels.Model):
 	def __unicode__(self):
 		return self.review + ' by ' + self.reviewer.username
 
+class GridGroup(geomodels.Model):
+	founder = models.ForeignKey(User, unique=True, related_name='grid_group_owner')
+	members = models.ManyToManyField(User, blank=True, null=True)
+
+	def __unicode__(self):
+		return self.founder.username

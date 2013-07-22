@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'custom_registration',
     'grid',
     'django_tables2',
     # Uncomment the next line to enable the admin:
@@ -130,6 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'postcodes',
     'django.contrib.humanize',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging

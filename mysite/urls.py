@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grid/', include('grid.urls', namespace="grid")),
-    url(r'^accounts/login/$', login),
-    url(r'^accounts/logout/$', logout),
+    url(r'^register/', include('custom_registration.urls', namespace="custom_registratoin")),
+    url(r'^login/$', login),
+    url(r'^logout/$', logout),
 )
