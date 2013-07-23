@@ -14,11 +14,20 @@ import json
 
 def find_users(request):
     if request.user.is_authenticated():
-        print request.GET
+        display_users = None
         group = GridGroup.objects.get(founder=request.user)
-        users = User.objects.exclude(
-                    pk__in=group.members.all().values_list(
-                    'pk', flat=True)).exclude(pk=request.user.pk)
+        data = None
+        for key, value in request.GET.iteritems():
+            data = json.loads(key)
+        try:
+            print data['search-string'] #search paramaters entered
+            users = User.objects.filter(username__icontains=data['search-string']).exclude(
+                        pk__in=group.members.all().values_list(
+                        'pk', flat=True)).exclude(pk=request.user.pk)
+        except:
+            users = User.objects.exclude(
+                        pk__in=group.members.all().values_list(
+                        'pk', flat=True)).exclude(pk=request.user.pk)
         display_users = users.all().values('username', 'id')
         print json.dumps(list(display_users))
         return HttpResponse(json.dumps(list(display_users)))

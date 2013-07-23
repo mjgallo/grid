@@ -24,14 +24,15 @@ class TableData:
 		rest_dict = Restaurant.objects.filter(Q(users_interested__in=self.getMyUsers(founder))|Q(users_interested=founder)).distinct()
 		self.all_restaurants = rest_dict.all() #could perhaps do distinct here instead of above
 		if filter != None:
+			uppercase = filter.upper()
 			postcode_obj = None
 			try:
-				remove_underscore = filter.replace("_", " ")
+				remove_underscore = uppercase.replace("_", " ")
 				postcode_obj = Postcode.objects.get(name=remove_underscore)
 				self.all_restaurants = self.all_restaurants.distance(
 									postcode_obj.location, field_name='post_code__location').order_by('distance')
 			except ObjectDoesNotExist:
-				remove_space = filter.replace("_", "")
+				remove_space = uppercase.replace("_", "")
 				try:
 					postcode_obj = Postcode.objects.get(name=remove_space)
 					self.all_restaurants = self.all_restaurants.distance(
