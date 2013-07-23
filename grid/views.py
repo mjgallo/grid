@@ -12,6 +12,31 @@ from postcodes.models import Postcode
 import string
 import json
 
+def find_users(request):
+    if request.user.is_authenticated():
+        print request.GET
+        group = GridGroup.objects.get(founder=request.user)
+        users = User.objects.exclude(
+                    pk__in=group.members.all().values_list(
+                    'pk', flat=True)).exclude(pk=request.user.pk)
+        display_users = users.all().values('username', 'id')
+        print json.dumps(list(display_users))
+        return HttpResponse(json.dumps(list(display_users)))
+
+def add_friend(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            print request.POST
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                rest_dict = json.loads(key)
+            new_friend = User.objects.get(pk=rest_dict['id'])
+            gridgroup = GridGroup.objects.get(founder=request.user)
+            gridgroup.members.add(new_friend)
+            print rest_dict
+        return HttpResponse(json.dumps({'success':True}))
+
+
 def detail(request, filter=None):
     if request.user.is_authenticated():
         group = GridGroup.objects.get(founder=request.user)
@@ -58,7 +83,6 @@ def update(request):
                 ident_list = string.split(request.POST['name'], '-')
                 good = True if request.POST['good']=='good' else False                
                 rest_updated = Restaurant.objects.get(pk=int(ident_list[1]))
-                print ident_list
                 new_review_object = Review(restaurant=rest_updated,
                                         review=request.POST['value'],
                                         good=good,
@@ -75,10 +99,8 @@ def update(request):
 def sort(request):
     print 'here0'
     if request.user.is_authenticated():
-        print 'here1'
         postcode=None
         if request.method=='POST':
-            print 'here2'
             postcode = request.POST['value']
             postcode = postcode.replace(" ", "_")
         else:
@@ -92,9 +114,7 @@ def newRestaurant(request):
         if request.method == 'POST':
             rest_dict = None
             for key, value in request.POST.iteritems():
-                print key
                 rest_dict = json.loads(key)
-                print rest_dict           
             rest_name = rest_dict['name']
             address = rest_dict['address']
             post_code = rest_dict['postcode']

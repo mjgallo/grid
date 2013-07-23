@@ -127,7 +127,9 @@ function createMarker(place, index) {
 //google.maps.event.addDomListener(window, 'load', initialize);
 
 $(document).ready(function() {
-	$('#submit-button').click(function(){
+  $('#newrestsearch').on('submit', function(e) {e.preventDefault(); return true;});
+	$('#newrestsearch').submit(function(){
+
 		initialize();
 
 		var search = '"' + $('#new-rest-search-params').val()+ '"';
@@ -140,6 +142,8 @@ $(document).ready(function() {
 		service.radarSearch(request, callback);
 		$("#map-canvas").css('display', 'block');
 	});
+  console.log( $('#newrestsearch').data('events') );
+
 });
 
 

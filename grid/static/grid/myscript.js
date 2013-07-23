@@ -12,8 +12,11 @@ $(document).ready(function() {
       showbuttons: 'bottom',
       number: 2,
     });
-
+    
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
+
+
+
 });
 var page = '<img src="https://si0.twimg.com/profile_images/1370359848/KatrinaKBowden_bigger.jpg"/>'
 $(document).ready(function() {

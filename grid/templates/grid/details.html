@@ -21,8 +21,9 @@
     <script src="/static/grid/address.js"></script>
     <script src="/static/bootstrap/js/bootstrap-tooltip.js"></script>
     <script src="/static/bootstrap/js/bootstrap-popover.js"></script>
-
+    <!-- custom stuff -->
     <script src="/static/grid/myscript.js"></script>
+    <script src="/static/grid/usertable.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/grid/mystyle.css">	
 
     <!-- GOOGLE MAPS JAVASCRIPT AND CSS AND MY CUSTOM-->
@@ -38,23 +39,27 @@
 Filter by postcode 
 </a>
 <div style="height:30px"></div>
-<div style="display:inline-block;width:60px"></div>
-<div style="display:inline-block">
-<table style:"table-layout:fixed" class="table table-bordered"> 
+<div style="float:left;width:60px"></div>
+<div style="margin-left:60px; margin-right:60px; margin-bottom:60px">
+<table class="table table-bordered" style="table-layout:fixed"> 
 	<thead class=tablehead>
 
 		<tr style="height:15px">
-			<th> </th>
+			<th style="width:140px;max-width:140px"> </th>
 			{% for user in all_users %}
-			<th style="width:140px">{{ user.username }}</th>
+			<th style="width:140px;max-width:140px">{{ user.username }}</th>
 			{% endfor %}
+			<th style="width:140px;max-width:140px;text-align:center"><a href="#myModal" id="addfriend" role="button" class="btn btn">Add a friend</a>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
 	{% if not table_data %}
 		<tr>
 			<td colspan=2>Search for restaurants below to start adding reviews</td>
+			<td></td>
 		</tr>
+
 	{% else %}
 	{% for restaurant in table_data %}
 		<tr class="rows">
@@ -98,25 +103,59 @@ Filter by postcode
 				</div>
 			</td>
 			{% endfor %}
+			<td class="reviewbox">
+			</td>
 		</tr>
 	{% endfor %}
 	{% endif %}
 	<tr id="searchrow">
 		<td id="searchbox" colspan=2 style="width:280px;max-width:280px">
 
-<form id="newrestsearch" class="form-search" style="margin-top:10px;margin-bottom:10px">
+<form id="newrestsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
   <input type="text" id="new-rest-search-params" placeholder="Add a restaurant" class="input-medium search-query">
-  <button id="submit-button" type="button" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
+  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
 <div id="searchresults" style="display:none"></div>
 
 		</td>
-		<td colspan={{ all_users|length|add:"-1" }}>
+		<td colspan={{ all_users|length }}>
 			<div id="map-canvas" style="display:none;height:338px;width:338px"></div>
 		</td>
 
 	</tr>
 	</tbody>
 </table>
+<div style="float:right; width:25%" ></div>
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Add friends to your grid</h3>
+  </div>
+  <div class="modal-body" id="modal-content">
+
+  	<form id="newfriendsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
+  <input type="text" id="friendsearchparams" placeholder="Look for a friend" class="input-medium search-query">
+  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+</form>	
+  	    <table id="usertable" class="table table-condensed table-hover">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Username</th>
+          <th style="width: 36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+      </tbody>
+    </table>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
 </div>
 </html>
