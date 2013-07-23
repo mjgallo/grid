@@ -1,6 +1,7 @@
 $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
+
     $('.edit').editable({
     	showbuttons: 'bottom',
     	number: 3,
@@ -52,6 +53,7 @@ query.push(k + '=' + encodeURIComponent(v));
   return '<img src="' + src + '" />';
 }
 $(document).ready(function() {
+
 	$('.showmap').click(function() {
 		$(this).popover('toggle');
 	});

@@ -28,11 +28,16 @@ class TableData:
 			try:
 				remove_underscore = filter.replace("_", " ")
 				postcode_obj = Postcode.objects.get(name=remove_underscore)
+				self.all_restaurants = self.all_restaurants.distance(
+									postcode_obj.location, field_name='post_code__location').order_by('distance')
 			except ObjectDoesNotExist:
 				remove_space = filter.replace("_", "")
-				postcode_obj = Postcode.objects.get(name=remove_space)
-			self.all_restaurants = self.all_restaurants.distance(
+				try:
+					postcode_obj = Postcode.objects.get(name=remove_space)
+					self.all_restaurants = self.all_restaurants.distance(
 									postcode_obj.location, field_name='post_code__location').order_by('distance')
+				except ObjectDoesNotExist:
+					print 'bad filter'
 
 	def getRestaurantSequence(self):
 		self.rest_list = []

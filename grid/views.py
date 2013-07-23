@@ -101,7 +101,8 @@ def sort(request):
     if request.user.is_authenticated():
         postcode=None
         if request.method=='POST':
-            postcode = request.POST['value']
+            print 'here1'
+            postcode = request.POST['filtername']
             postcode = postcode.replace(" ", "_")
         else:
             print 'Didnt say anything'
