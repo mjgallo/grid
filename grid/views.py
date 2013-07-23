@@ -32,6 +32,19 @@ def find_users(request):
         print json.dumps(list(display_users))
         return HttpResponse(json.dumps(list(display_users)))
 
+def remove_user(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                rest_dict = json.loads(key)
+            gridgroup = GridGroup.objects.get(founder=request.user)
+            gridgroup.members.remove(rest_dict['removed_id'])
+        else:
+            print 'no POST'
+        return HttpResponse(json.dumps({'success':True}))
+    return HttpResponse(json.dumps({'success':False}))
+
 def add_friend(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
