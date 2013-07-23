@@ -112,12 +112,13 @@
                                         <button type="submit" class="btn btn-success">Sign Up</button>
                                         <button type="button" class="btn">Help</button>
                                     </div>
-                                </div>  
-                                <div class="alert alert-info" style="display:none">
+                                </div> 
+                                {% if registration_error %}
+                                <div class="alert alert-error">
                                     <button type="button" class="close" data-dismiss="alert" >×</button>
-                                    <strong>Confirmation: </strong> A confirmation email has been sent to your email.<br>
-                                    Thank you for your registration.
+                                    <strong>Please enter all the information: </strong>
                                 </div>
+                                {% endif %}
                             </form> 
             </div>                            
                     </div>
