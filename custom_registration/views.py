@@ -29,6 +29,7 @@ def register(request):
             template = loader.get_template('registration/login.html')
             context = RequestContext(request, {
                 'registration_error': True,
+                'form':form,
                 })
             return HttpResponse(template.render(context))
     return HttpResponseRedirect("/login")
