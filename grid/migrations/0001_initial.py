@@ -14,6 +14,8 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('post_code', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['postcodes.Postcode'])),
+            ('telephone', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('website', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
         ))
         db.send_create_signal(u'grid', ['Restaurant'])
 
@@ -33,6 +35,7 @@ class Migration(SchemaMigration):
             ('review', self.gf('django.db.models.fields.CharField')(max_length=160)),
             ('good', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('reviewer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
+            ('last_updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
         ))
         db.send_create_signal(u'grid', ['Review'])
 
@@ -111,7 +114,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'GridGroup'},
             'founder': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_owner'", 'unique': 'True', 'to': u"orm['auth.User']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'members': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'})
+            'members': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         u'grid.restaurant': {
             'Meta': {'object_name': 'Restaurant'},
@@ -119,12 +122,15 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'post_code': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['postcodes.Postcode']"}),
-            'users_interested': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'})
+            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'users_interested': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         u'grid.review': {
             'Meta': {'object_name': 'Review'},
             'good': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
             'restaurant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grid.Restaurant']"}),
             'review': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})

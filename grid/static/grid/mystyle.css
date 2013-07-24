@@ -18,6 +18,39 @@
   vertical-align=top;
   overflow: auto;
 }
+.remove-user-background1 {
+  background-color:white;
+  opacity: 1;
+
+}
+
+
+.remove-user-background1:hover,
+.remove-user-background1:focus,
+.remove-user-background1:active,
+.remove-user-background1.active,
+.remove-user-background1.disabled,
+.remove-user-background1[disabled] {
+  margin-top:0px;
+  background-color: transparent;
+  *background-color: transparent;
+}
+
+.remove-user-background {
+    background-color: #FF4500;
+  *background-color: #FF4500;
+   margin-left: 7px;
+  background-image: -moz-linear-gradient(top, gray, white);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(gray), to(white));
+  background-image: -webkit-linear-gradient(top, gray, white);
+  background-image: -o-linear-gradient(top, gray, white);
+  background-image: linear-gradient(to bottom, gray, white);
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+
 
 .generalreviewdiv{}
   white-space: pre-wrap; /* css-3 */

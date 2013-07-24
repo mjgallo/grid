@@ -17,6 +17,7 @@ $(document).ready(function() {
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
 
     $('.remove-user').click(function(){
+        console.log('remove user is clicked');
         var user_id = $(this).attr('id');
         var request = $.ajax({
           type: "POST",

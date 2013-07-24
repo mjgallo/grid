@@ -42,32 +42,6 @@
    margin-left: 7px; 
 }
 
-.editable-buttons .editable-bad {
-    color: orange;
-    background-color: #FF4500;
-  *background-color: #FF4500;
-   margin-left: 7px;
-  background-image: -moz-linear-gradient(top, orange, #FF4500);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(orange), to(#FF4500));
-  background-image: -webkit-linear-gradient(top, orange, #FF4500);
-  background-image: -o-linear-gradient(top, orange, #FF4500);
-  background-image: linear-gradient(to bottom, orange, #FF4500);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-
-}
-
-.editable-bad:hover,
-.editable-bad:focus,
-.editable-bad:active,
-.editable-bad.active,
-.editable-bad.disabled,
-.editable-bad[disabled] {
-  color:red;
-  background-color: #FF4500;
-  *background-color: #FF4500;
-}
-
 /*for jquery-ui buttons need set height to look more pretty*/
 .editable-buttons button.ui-button-icon-only {
    height: 24px; /*24px*/

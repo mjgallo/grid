@@ -10,6 +10,8 @@ class Restaurant(geomodels.Model):
 	address = geomodels.CharField(max_length=100)
 	post_code = geomodels.ForeignKey(Postcode)
 	users_interested = models.ManyToManyField(User)
+	telephone = models.CharField(max_length=20, null=True, blank=True)
+	website = models.URLField(null=True, blank=True)
 
 	objects = geomodels.GeoManager()
 
@@ -23,6 +25,7 @@ class Review(geomodels.Model):
 	review = geomodels.CharField(max_length=160)
 	good = geomodels.BooleanField()
 	reviewer = geomodels.ForeignKey(User, null=True)
+	last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 	def __unicode__(self):
 		return self.review + ' by ' + self.reviewer.username

@@ -57,7 +57,9 @@
 			{% for user in all_users %}
 			<th style="width:140px;max-width:140px">
 				<p style="display:inline-block;text-align:left">{{ user.username }}</p>
-				<i class="remove-user icon-remove" id={{ user.pk }} style="display:inline-block; text-align:right" ></i>
+				{% if user != this_user %}
+				<button type="button" id={{ user.pk }} class="close remove-user" data-dismiss="modal" aria-hidden="true" >×</button>
+				{% endif %}
 			</th>
 			{% endfor %}
 			<th style="width:140px;max-width:140px;text-align:center"><a href="#myModal" id="addfriend" role="button" class="btn btn">Add a friend</a>
@@ -77,6 +79,13 @@
 			<td style="width:120px">
 				<a href="#" id="tester" rel="popover" class="showmap" data-toggle="popover" data-location={{ restaurant.0.restaurant.address|spacify }},{{ restaurant.1.restaurant.post_code.name|spacify }}>
 					<b>{{ restaurant.0.restaurant.name }}<br> {{ restaurant.0.restaurant.post_code.name }}</b>{% if restaurant.0.restaurant.distance %}<br> {{ restaurant.0.restaurant.distance.km|floatformat:"1"|intcomma }}km away{% endif %}</a>
+					{% if restaurant.0.restaurant.telephone %}
+					<p>{{ restaurant.0.restaurant.telephone }}</p>
+					{% endif %}
+					{% if restaurant.0.restaurant.website %}
+					<a href={{ restaurant.0.restaurant.website }} target='_blank'>Website</a>
+					{% endif %}
+
 			</td>
 			{% for user_review in restaurant %}
 			<td class="reviewbox">

@@ -140,6 +140,8 @@ def newRestaurant(request):
                 rest_dict = json.loads(key)
             rest_name = rest_dict['name']
             address = rest_dict['address']
+            phone = rest_dict['phone']
+            website = rest_dict['website']
             post_code = rest_dict['postcode']
             post_obj = None
             try:
@@ -154,7 +156,7 @@ def newRestaurant(request):
             try: #see if restaurant is already in database for some reason
                 rest_obj = Restaurant.objects.get(name=rest_name, address=address, post_code=post_obj)
             except (KeyError, Restaurant.DoesNotExist):
-                rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj)
+                rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj, telephone=phone, website=website)
                 rest_obj.save()
             rest_obj.users_interested.add(request.user.pk)
             return HttpResponse(json.dumps(rest_dict))
