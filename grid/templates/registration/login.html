@@ -71,25 +71,25 @@
                                 <div class="control-group">
                                     <label class="control-label" for="inputFirst">First Name</label>
                                     <div class="controls">
-                                        <input type="text" name="first_name" id="inputFirst" placeholder="E.g. Joe">
+                                        <input type="text" name="first_name" id="inputFirst" placeholder="Optional">
                                     </div>
                                 </div>
                                 <div class="control-group">
                                     <label class="control-label" for="inputLast" name="last_name">Last Name</label>
                                     <div class="controls">
-                                        <input type="text" id="inputLast" placeholder="E.g. Thompson">
+                                        <input type="text" id="inputLast" placeholder="Optional">
                                     </div>
                                 </div>
                                 <div class={% if form.email.errors %}"control-group error"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="inputEmail">Email</label>
                                     <div class="controls">
-                                        <input type="text" id="inputEmail" name="email" placeholder="E.g. jthom@example.com">
+                                        <input type="text" id="inputEmail" name="email" placeholder="Required">
                                     </div>
                                 </div>
                                 <div class="control-group">
                                     <label class="control-label" for="inputUser">Username</label>
                                     <div class="controls">
-                                        <input type="text" id="inputUser" name="username" placeholder={% if form.errors %}{{ form.username }}{% else %}'E.g. jthom37'>{% endif %}
+                                        <input type="text" id="inputUser" name="username" placeholder={% if form.errors %}{{ form.username }}{% else %}'No spaces'>{% endif %}
                                     </div>
                                 </div>
                                 <div class="control-group">
