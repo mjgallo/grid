@@ -17,7 +17,6 @@ $(document).ready(function() {
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
 
     $('.remove-user').click(function(){
-        console.log('remove user is clicked');
         var user_id = $(this).attr('id');
         var request = $.ajax({
           type: "POST",
@@ -47,7 +46,7 @@ $(document).ready(function() {
 
 });
 
-var getMap = function(opts, tag) {
+var getMap = function(opts) {
   var src = "http://maps.googleapis.com/maps/api/staticmap?",
   params = $.extend({
     zoom: 14,
@@ -62,12 +61,9 @@ query.push(k + '=' + encodeURIComponent(v));
   });
 
   src += query.join('&');
-  if (tag){
-    return '<img src="' + src + '" />';
-  }
-  else{
-    return src;
-  } 
+
+  return '<img src="' + src + '" />';
+
 }
 
 $(document).ready(function() {

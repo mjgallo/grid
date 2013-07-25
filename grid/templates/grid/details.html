@@ -77,7 +77,7 @@
 	{% for restaurant in table_data %}
 		<tr class="rows">
 			<td style="width:120px">
-				<a href="#" id="tester" rel="popover" class="showmap" data-toggle="popover" data-location={{ restaurant.0.restaurant.address|spacify }},{{ restaurant.1.restaurant.post_code.name|spacify }}>
+				<a href="#" id="tester" rel="popover" class="showmap" data-toggle="popover" data-location={{ restaurant.0.restaurant.address|spacify }},{{ restaurant.0.restaurant.post_code.name|spacify }}>
 					<b>{{ restaurant.0.restaurant.name }}<br> {{ restaurant.0.restaurant.post_code.name }}</b>{% if restaurant.0.restaurant.distance %}<br> {{ restaurant.0.restaurant.distance.km|floatformat:"1"|intcomma }}km away{% endif %}</a>
 					{% if restaurant.0.restaurant.telephone %}
 					<p>{{ restaurant.0.restaurant.telephone }}</p>

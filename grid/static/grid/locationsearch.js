@@ -44,7 +44,6 @@ function callback(results, status) {
   }
   for (var i = 0, result; result = results[i]; i++) {
     createMarker(result, i);
-    console.log(result.reference);
     service.getDetails({reference:result.reference}, detailsCallback(i));
   }
 }
@@ -55,7 +54,6 @@ function detailsCallback(result_num) {
 	var street;
 	var postcode; 
   var address;
-    console.log(place.address_components);
 
   	for (var i = 0; i < place.address_components.length; i++){
 		var attr = place.address_components[i];
@@ -88,7 +86,6 @@ function detailsCallback(result_num) {
 }
 
   var button_text = '<p align="left" style="display:inline-block">' + arrLetter[result_num] + ' </p><p align="right" style="display:inline-block"><b>' + name + '</b><br>' + address + '<br>' + postcode + '</p>';	 
-  console.log(button_text); 
   var button = document.createElement("button");
   button.setAttribute('class', 'btn btn-xlarge');
   button.setAttribute('type', 'button');
@@ -106,7 +103,6 @@ function detailsCallback(result_num) {
   	type: "POST",
   	url: "/grid/add_restaurant/",
   	success: function(){
-  		console.log("Restaurant in server");
   		$("#searchresults").empty();
   		$("#map-canvas").css('display', 'none');
   		location.reload();
@@ -147,7 +143,6 @@ $(document).ready(function() {
 		initialize();
 
 		var search = '"' + $('#new-rest-search-params').val()+ '"';
-		console.log(search);
 		var request = {
 			location:london,
 			radius:'10000',
@@ -156,7 +151,6 @@ $(document).ready(function() {
 		service.radarSearch(request, callback);
 		$("#map-canvas").css('display', 'block');
 	});
-  console.log( $('#newrestsearch').data('events') );
 
 });
 

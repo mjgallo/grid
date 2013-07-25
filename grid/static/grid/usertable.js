@@ -2,7 +2,6 @@ $(document).ready(function() {
 	$('#newfriendsearch').on('click', function(e) {e.preventDefault(); return true;});
 	
 	$('#myModal').show(0, onModalShow);
-	console.log($('#myModal').find('form'));
 	$('#myModal').find('form').submit(runSearch);
 	$('#addfriend').click(function(){
 		
@@ -38,7 +37,6 @@ $(document).ready(function() {
 	            var cell2 = row.insertCell(1);
 	            var cell3 = row.insertCell(2);
 	            var cell4 = row.insertCell(3);
-	            console.log(msg[i].username);
 	            cell4.innerHTML = msg[i].username;
 	            $(row).on('click', msg[i].id, addNewFriend);
         }}
@@ -55,12 +53,10 @@ $(document).ready(function() {
 
 function onModalShow(){
 	$('#submit-button3').on('click', runSearch);
-	console.log('modal will show');
 }
 
 
 function runSearch(){
-	console.log('clicked');
 
 	var table = document.getElementById('tbody');
 	
@@ -93,7 +89,6 @@ function runSearch(){
 	        var cell2 = row.insertCell(1);
 	        var cell3 = row.insertCell(2);
 	        var cell4 = row.insertCell(3);
-	        console.log(msg[i].username);
 	        cell4.innerHTML = msg[i].username;
             $(row).on('click', msg[i].id, addNewFriend);
 
@@ -103,14 +98,12 @@ function runSearch(){
 }
 
 function addNewFriend(id) {
-	console.log(id.data);
 	var newrequest = $.ajax({
 			type: "POST",
 			url: "/grid/add_friend/",
 			dataType:'json',
 			data:JSON.stringify({'id':id.data}),
 		}).done(function(msg) {
-		console.log('here');
 		$('#myModal').modal('hide');
 		location.reload();
 });
