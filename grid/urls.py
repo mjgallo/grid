@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
 from grid import views
+from custom_registration import views as reg_views
 
 urlpatterns = patterns('', 
 	url(r'^$', views.detail, name='detailnofilter'),
@@ -11,5 +12,6 @@ urlpatterns = patterns('',
 	url(r'^add_friend/$', views.add_friend, name='add_friend'),
 	url(r'^add_restaurant/$', views.newRestaurant, name='restaurant'),
 	url(r'^(?P<filter>\w+)/$', views.detail, name='detail'),
+    url(r'^.*/$', reg_views.wrongUrl, name='wrongUrl'),
 )
 

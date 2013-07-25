@@ -174,6 +174,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
 )
 
-STATIC_URL = '/static/'
+AUTH_PROFILE_MODULE='accounts.UserProfile'
+
+LOGIN_REDIRECT_URL='/login/'
+LOGIN_URL='/login/'
 
 APPEND_SLASH=True

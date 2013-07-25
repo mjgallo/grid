@@ -79,7 +79,7 @@ def detail(request, filter=None):
             })
         return HttpResponse(template.render(context))
     else:
-        return HttpResponse('User is not authenticated to view grid')
+        return HttpResponseRedirect('/login/')
 
 
 def update(request):
@@ -116,7 +116,7 @@ def update(request):
             return HttpResponse(new_review)
         return HttpResponse('Did not use POST method')
     else:
-        return HttpResponse('User is not authenticated to update')
+        return HttpResponseRedirect('/login/')
 
 def sort(request):
     print 'here0'
@@ -130,7 +130,7 @@ def sort(request):
             print 'Didnt say anything'
         return HttpResponseRedirect(reverse('grid:detail', kwargs={'filter':postcode}))
     else:
-        return HttpResponse('not logged in')
+        return HttpResponseRedirect('/login/')
 
 def newRestaurant(request):
     if request.user.is_authenticated():
@@ -167,4 +167,4 @@ def newRestaurant(request):
             return HttpResponse(json.dumps(rest_dict))
         return HttpResponse('Did not use POST method')
     else:
-        return HttpResponse('User is not authenticated to update')
+        return HttpResponseRedirect('/login/')

@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.views import login, logout
+from django.views.generic import RedirectView
+from custom_registration import views as reg_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -19,4 +21,6 @@ urlpatterns = patterns('',
     url(r'^register/', include('custom_registration.urls', namespace="custom_registration")),
     url(r'^login/$', login),
     url(r'^logout/$', logout, {'next_page':'/login/'}),
+    url(r'^.*/$', reg_views.wrongUrl, name='wrongUrl'),
+
 )

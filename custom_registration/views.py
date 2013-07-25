@@ -33,3 +33,9 @@ def register(request):
                 })
             return HttpResponse(template.render(context))
     return HttpResponseRedirect("/login")
+
+def wrongUrl(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/grid/")
+    else:
+        return HttpResponseRedirect("/login/")
