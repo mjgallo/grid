@@ -2,3 +2,4 @@ postcodes/management/uk-post-codes-2009.csv
 postcodes/management/uk-post-codes-2009abridged.csv
 *.DS_store
 *.pyc
+media/

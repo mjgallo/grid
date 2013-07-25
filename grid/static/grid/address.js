@@ -1,7 +1,7 @@
 /**
 Address editable input.
 Internally value stored as {city: "Moscow", street: "Lenina", building: "15"}
-
+test
 @class address
 @extends abstractinput
 @final

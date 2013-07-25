@@ -1,4 +1,5 @@
 # Django settings for mysite project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -61,7 +62,8 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__)) 
+STATIC_ROOT = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'media'))
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -72,6 +74,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+
 )
 
 # List of finder classes that know how to find static files in
