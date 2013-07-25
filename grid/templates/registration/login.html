@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html>
 <head>
   <meta charset="utf-8" />
@@ -15,12 +16,14 @@
   </head>
 <body>
 <h1> gridique</h1>
+
+
 <div class="container">
           <div class="row-fluid">
               <div class="span12">
                   <div class="span6">
                       <div class="area">
-                            <form class="form-horizontal" action="" method="post">
+                            <form class="form-horizontal" action="/login/" method="post">
                               {% csrf_token %}
                                 <div class="heading">
                                     <h4 class="form-heading">Sign In</h4>
@@ -47,7 +50,7 @@
                                         <button type="button" class="btn">Help</button>
                                     </div>
                                 </div> 
-                                {% if form.errors.username %}
+                                {% if form.errors and not registration_error %}
                                 <div class="alert alert-error" style=>
                                     <button type="button" class="close" data-dismiss="alert">×</button>
                                     <strong>Check username and password</strong>
@@ -75,21 +78,23 @@
                                     </div>
                                 </div>
                                 <div class="control-group">
-                                    <label class="control-label" for="inputLast" name="last_name">Last Name</label>
+                                    <label class="control-label" for="inputLast" >Last Name</label>
                                     <div class="controls">
-                                        <input type="text" id="inputLast" placeholder="Optional">
+                                        <input type="text" name="last_name" id="inputLast" placeholder="Optional">
                                     </div>
                                 </div>
-                                <div class={% if form.email.errors %}"control-group error"{% else %}"control-group"{% endif %}>
+                                <div class={% if form.email.errors and registration_error %}"control-group error"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="inputEmail">Email</label>
                                     <div class="controls">
-                                        <input type="text" id="inputEmail" name="email" placeholder="Required">
+                                        <input type="text" id="inputEmail" name="email" placeholder={% if form.errors and registration_error %}{{ form.email }}{% else %}'Required'{% endif %}>
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class={% if form.username.errors and registration_error %}"control-group info"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="inputUser">Username</label>
                                     <div class="controls">
-                                        <input type="text" id="inputUser" name="username" placeholder={% if form.errors %}{{ form.username }}{% else %}'No spaces'>{% endif %}
+                                        <input type="text" id="inputUser" name="username" placeholder={% if form.errors and registration_error %}{{ form.username }}{% else %}'No spaces'{% endif %}>
+
+                                        {% if form.username.errors and registration_error %}<span class="help-inline">Try another username</span>{% endif %}
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -98,10 +103,12 @@
                                         <input type="password" id="inputPassword" name="password1" placeholder="Min. 8 Characters">
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class={% if registration_error and not form.username.errors and not form.email.errors %}"control-group info"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="inputPassword">Confirm password</label>
                                     <div class="controls">
                                         <input type="password" id="inputPassword" name="password2" placeholder="Confirm">
+
+                                        {% if registration_error and not form.username.errors and not form.email.errors %}<span class="help-inline">Passwords didn't match</span>{% endif %}
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -116,7 +123,7 @@
                                 {% if registration_error %}
                                 <div class="alert alert-error">
                                     <button type="button" class="close" data-dismiss="alert" >×</button>
-                                    <strong>Please enter all the information </strong>
+                                    <strong>Please correct your details</strong>
                                 </div>
                                 {% endif %}
                             </form> 

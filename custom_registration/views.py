@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 from grid.models import GridGroup
 from custom_registration.forms import CustomRegistrationForm
 from django.template import RequestContext, loader
+from django.core.context_processors import csrf
 
 
 def register(request):
@@ -27,11 +28,12 @@ def register(request):
             return HttpResponseRedirect("/grid/")
         else:
             template = loader.get_template('registration/login.html')
-            context = RequestContext(request, {
+            context = {
                 'registration_error': True,
                 'form':form,
-                })
-            return HttpResponse(template.render(context))
+                }
+            context.update(csrf(request))
+            return render_to_response('registration/login.html', context)
     return HttpResponseRedirect("/login")
 
 def wrongUrl(request):
