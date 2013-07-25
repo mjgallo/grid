@@ -1,5 +1,6 @@
-import sys
+import sys, os
 import csv
+
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
