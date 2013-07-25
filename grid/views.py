@@ -28,7 +28,7 @@ def find_users(request):
             users = User.objects.exclude(
                         pk__in=group.members.all().values_list(
                         'pk', flat=True)).exclude(pk=request.user.pk)
-        display_users = users.all().values('username', 'id')
+        display_users = users.all().values('username', 'id', 'first_name', 'last_name')
         print json.dumps(list(display_users))
         return HttpResponse(json.dumps(list(display_users)))
 
@@ -48,7 +48,6 @@ def remove_user(request):
 def add_friend(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            print request.POST
             rest_dict = None
             for key, value in request.POST.iteritems():
                 rest_dict = json.loads(key)
@@ -68,9 +67,6 @@ def detail(request, filter=None):
         all_users = table.getMyUsers(request.user)
         all_restaurants = table.getRestaurantSequence()
         template = loader.get_template('grid/details.html')
-        print 'length of table  data'
-        print(len(table_data))
-        print(table_data)
         context = RequestContext(request, {
             'all_users': all_users,
             'table_data':table_data,
