@@ -54,6 +54,7 @@ function detailsCallback(result_num) {
 	var number;
 	var street;
 	var postcode; 
+  var address;
     console.log(place.address_components);
 
   	for (var i = 0; i < place.address_components.length; i++){
@@ -66,12 +67,25 @@ function detailsCallback(result_num) {
 		  postcode = attr.short_name;
 	}	
   var arrLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-  var address = number + ' ' + street;
+
+  if(typeof number !== "undefined" && typeof street !== "undefined") {
+    address = number + ' ' + street;
+  }
+  else if (typeof street !== "undefined"){
+    address = street;
+  }  
+  else{
+    address = ' ';
+  }
+
   var phone = place.formatted_phone_number;
   var open = place.opening_hours;
   var name = place.name;
   var url = place.website;
 
+  if(typeof postcode !== "undefined") {
+    // obj is a valid variable, do something here.
+}
 
   var button_text = '<p align="left" style="display:inline-block">' + arrLetter[result_num] + ' </p><p align="right" style="display:inline-block"><b>' + name + '</b><br>' + address + '<br>' + postcode + '</p>';	 
   console.log(button_text); 
