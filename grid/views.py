@@ -11,6 +11,7 @@ from grid.tables import RestaurantTable
 from postcodes.models import Postcode
 import string
 import json
+from django.db.models import Q
 
 def find_users(request):
     if request.user.is_authenticated():
@@ -20,8 +21,9 @@ def find_users(request):
         for key, value in request.GET.iteritems():
             data = json.loads(key)
         try:
-            print data['search-string'] #search paramaters entered
-            users = User.objects.filter(username__icontains=data['search-string']).exclude(
+            users = User.objects.filter(Q(username__icontains=data['search-string'])|
+                        Q(first_name__icontains=data['search-string'])|
+                        Q(last_name__icontains=data['search-string'])).exclude(
                         pk__in=group.members.all().values_list(
                         'pk', flat=True)).exclude(pk=request.user.pk)
         except:
@@ -29,7 +31,6 @@ def find_users(request):
                         pk__in=group.members.all().values_list(
                         'pk', flat=True)).exclude(pk=request.user.pk)
         display_users = users.all().values('username', 'id', 'first_name', 'last_name')
-        print json.dumps(list(display_users))
         return HttpResponse(json.dumps(list(display_users)))
 
 def remove_user(request):
