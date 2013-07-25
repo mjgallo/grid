@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Postcode.objects.all().delete()
         count = 0
-        with open('/Users/mgallo/Envs/env1/mysite/postcodes/management/uk-post-codes-2009.csv') as csvfile: 
+        with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'uk-post-codes-2009.csv'))) as csvfile: 
             for row in csv.reader(csvfile):
                 try:
                     name = row[0].upper().strip().replace('  ', ' ')
