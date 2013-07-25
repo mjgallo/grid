@@ -143,6 +143,11 @@ def newRestaurant(request):
             phone = rest_dict['phone']
             website = rest_dict['website']
             post_code = rest_dict['postcode']
+            print("rest name: %s" % rest_name)
+            print("address: %s" % address)
+            print("phone: %s" % phone)
+            print("website: %s" % website)
+            print("post_code: %s" % post_code)
             post_obj = None
             try:
                 post_obj = Postcode.objects.get(name=post_code)
