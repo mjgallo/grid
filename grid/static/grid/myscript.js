@@ -7,6 +7,7 @@ $(document).ready(function() {
     	number: 3,
     	savenochange:true,
     	highlight:true,
+      success: $.proxy(updatedReviewResponse, $(this)),
     });
 
    $('.search').editable({
@@ -45,6 +46,16 @@ $(document).ready(function() {
 	});
 
 });
+
+function updatedReviewResponse(response, newValue) {
+  var obj = JSON.parse(response);
+  if (obj.new_id !== obj.old_id) {
+    var element = document.getElementById(obj.old_id.toString());
+    var new_id = obj.new_id;
+    var new_string = new_id.toString();
+    element.setAttribute('id', new_string);
+  }
+}
 
 var getMap = function(opts) {
   var src = "http://maps.googleapis.com/maps/api/staticmap?",

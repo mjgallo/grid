@@ -84,6 +84,7 @@ def update(request):
         if request.method == 'POST':
             this_review = None
             new_review = None
+            user_rest_string = None
             good=None
             try:
                 for key, value in request.POST.iteritems():
@@ -93,12 +94,13 @@ def update(request):
                     this_review = Review.objects.get(pk=div_id)
                 except (KeyError, Review.DoesNotExist):
                     print 'Review for some reason does not exist'
-                new_review = request.POST['value']
+                new_review = request.POST['name']
                 good = True if request.POST['good']=='good' else False
+                user_rest_string = 'xxxx'; #id of review in html so as not to match anything
                 this_review.review = new_review
                 this_review.good=good
                 this_review.save()
-            except (ValueError): #no review yet, div_id is 'user_id-restaurant_id'
+            except (ValueError): #no review yet, div_id is 'user_id-restaurant_id' update to use request.user???
                 ident_list = string.split(request.POST['name'], '-')
                 good = True if request.POST['good']=='good' else False                
                 rest_updated = Restaurant.objects.get(pk=int(ident_list[1]))
@@ -109,18 +111,16 @@ def update(request):
                                         )
                 rest_updated.users_interested.add(request.user.pk)
                 new_review_object.save()
-                new_review = new_review_object.review
-            return HttpResponse(new_review)
+                new_review = new_review_object.id
+            return HttpResponse(json.dumps({'new_id':str(new_review), 'old_id':request.POST['name']}))
         return HttpResponse('Did not use POST method')
     else:
         return HttpResponseRedirect('/login/')
 
 def sort(request):
-    print 'here0'
     if request.user.is_authenticated():
         postcode=None
         if request.method=='POST':
-            print 'here1'
             postcode = request.POST['filtername']
             postcode = postcode.replace(" ", "_")
         else:
@@ -133,20 +133,21 @@ def newRestaurant(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
             rest_dict = None
+            website = None
+            phone = None
             for key, value in request.POST.iteritems():
-                print("key: %s" % key)
-                print("value: %s" % value)
                 rest_dict = json.loads(key)
             rest_name = rest_dict['name']
             address = rest_dict['address']
-            phone = rest_dict['phone']
-            website = rest_dict['website']
+            try:
+                phone = rest_dict['phone']
+            except KeyError:
+                print('phone not available')
+            try:
+                website = rest_dict['website']
+            except KeyError:
+                print('website not available')
             post_code = rest_dict['postcode']
-            print("rest name: %s" % rest_name)
-            print("address: %s" % address)
-            print("phone: %s" % phone)
-            print("website: %s" % website)
-            print("post_code: %s" % post_code)
             post_obj = None
             try:
                 post_obj = Postcode.objects.get(name=post_code)
