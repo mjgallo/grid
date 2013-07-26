@@ -86,33 +86,23 @@ def update(request):
             new_review = None
             user_rest_string = None
             good=None
+            ident_list = string.split(request.POST['name'], '-')
+            rest_updated = Restaurant.objects.get(pk=int(ident_list[1])) 
+            good = True if request.POST['good']=='good' else False
             try:
-                for key, value in request.POST.iteritems():
-                    print (key + ' ' + value)
-                div_id = int(request.POST['name'])
-                try: 
-                    this_review = Review.objects.get(pk=div_id)
-                except (KeyError, Review.DoesNotExist):
-                    print 'Review for some reason does not exist'
-                new_review = request.POST['name']
-                good = True if request.POST['good']=='good' else False
-                user_rest_string = 'xxxx'; #id of review in html so as not to match anything
-                this_review.review = new_review
-                this_review.good=good
-                this_review.save()
-            except (ValueError): #no review yet, div_id is 'user_id-restaurant_id' update to use request.user???
-                ident_list = string.split(request.POST['name'], '-')
-                good = True if request.POST['good']=='good' else False                
-                rest_updated = Restaurant.objects.get(pk=int(ident_list[1]))
-                new_review_object = Review(restaurant=rest_updated,
+                this_review = Review.objects.get(restaurant=rest_updated,
+                                                reviewer=request.user)
+            except(KeyError, Review.DoesNotExist):
+                this_review = Review(restaurant=rest_updated,
                                         review=request.POST['value'],
                                         good=good,
-                                        reviewer=User.objects.get(pk=int(ident_list[0])),
+                                        reviewer=request.user,
                                         )
-                rest_updated.users_interested.add(request.user.pk)
-                new_review_object.save()
-                new_review = new_review_object.id
-            return HttpResponse(json.dumps({'new_id':str(new_review), 'old_id':request.POST['name']}))
+            this_review.good = good
+            this_review.review = request.POST['value']
+            this_review.save()
+            new_review = this_review.review
+            return HttpResponse(json.dumps({'new_review':new_review}))
         return HttpResponse('Did not use POST method')
     else:
         return HttpResponseRedirect('/login/')

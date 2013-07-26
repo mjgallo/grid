@@ -100,7 +100,7 @@
 					>
 
 						<div href=# 	
-							id={% if user_review.review %}{{ user_review.id }}{% else %}{{ user_review.reviewer.id }}-{{ user_review.restaurant.id }} {% endif %}
+							id={{ user_review.reviewer.id }}-{{ user_review.restaurant.id }}
 
 							data-type="textarea"
 							data-pk="1"

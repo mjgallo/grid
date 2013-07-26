@@ -48,13 +48,8 @@ $(document).ready(function() {
 });
 
 function updatedReviewResponse(response, newValue) {
-  var obj = JSON.parse(response);
-  if (obj.new_id !== obj.old_id) {
-    var element = document.getElementById(obj.old_id.toString());
-    var new_id = obj.new_id;
-    var new_string = new_id.toString();
-    element.setAttribute('id', new_string);
-  }
+  var obj = JSON.parse(response); // dict key is new_review
+  console.log(response.new_review);
 }
 
 var getMap = function(opts) {
