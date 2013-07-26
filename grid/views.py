@@ -134,6 +134,8 @@ def newRestaurant(request):
         if request.method == 'POST':
             rest_dict = None
             for key, value in request.POST.iteritems():
+                print("key: %s" % key)
+                print("value: %s" % value)
                 rest_dict = json.loads(key)
             rest_name = rest_dict['name']
             address = rest_dict['address']

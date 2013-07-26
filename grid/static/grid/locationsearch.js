@@ -81,10 +81,6 @@ function detailsCallback(result_num) {
   var name = place.name;
   var url = place.website;
 
-  if(typeof postcode !== "undefined") {
-    // obj is a valid variable, do something here.
-}
-
   var button_text = '<p align="left" style="display:inline-block">' + arrLetter[result_num] + ' </p><p align="right" style="display:inline-block"><b>' + name + '</b><br>' + address + '<br>' + postcode + '</p>';	 
   var button = document.createElement("button");
   button.setAttribute('class', 'btn btn-xlarge');
@@ -97,9 +93,13 @@ function detailsCallback(result_num) {
   jbutton.append(button_text);
   $("#searchresults").append(button);
   $("#searchresults").css('display', 'block');
+  var data = JSON.stringify({'name': name, 'address': address, 'phone': phone, 'website':url, 'postcode':postcode});
+  console.log(data);
+  var escapeddata = escape(data);
+  console.log(escapeddata);
   jbutton.click(function(){
   	$.ajax({
-  	data: JSON.stringify({'name': name, 'address': address, 'phone': phone, 'website':url, 'postcode':postcode}),
+  	data: escapeddata,
   	type: "POST",
   	url: "/grid/add_restaurant/",
   	success: function(){
