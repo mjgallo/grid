@@ -2,12 +2,15 @@ var map;
 var infoWindow;
 var service;
 var london;
-
+var current_grid;
 
 function initialize() {
 	london= new google.maps.LatLng(51.519092, -0.098190);
   
-  map = new google.maps.Map(document.getElementById('map-canvas'), {
+  var map_id = 'map-canvas' + current_grid.toString();
+  console.log(map_id);
+  console.log(document.getElementById(map_id));
+  map = new google.maps.Map(document.getElementById(map_id), {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     center: london,
     zoom: 11,
@@ -40,7 +43,8 @@ function callback(results, status) {
     return;
   }
   else {
-  	$("#searchresults").empty();
+    var searchresults_id = "#searchresults" + current_grid.toString();
+  	$(searchresults_id).empty();
   }
   for (var i = 0, result; result = results[i]; i++) {
     createMarker(result, i);
@@ -89,21 +93,22 @@ function detailsCallback(result_num) {
   //button.setAttribute('style', 'max-width:')
   var jbutton = $(button);
 
+  var searchresults_id = "#searchresults" + current_grid.toString();
+  console.log(searchresults_id);
 
   jbutton.append(button_text);
-  $("#searchresults").append(button);
-  $("#searchresults").css('display', 'block');
-  var data = JSON.stringify({'name': name, 'address': address, 'phone': phone, 'website':url, 'postcode':postcode});
-  console.log(data);
+  $(searchresults_id).append(button);
+  $(searchresults_id).css('display', 'block');
+  var table_id = $('table').attr('id');
+  var data = JSON.stringify({'group': current_grid, 'name': name, 'address': address, 'phone': phone, 'website':url, 'postcode':postcode});
   var escapeddata = escape(data);
-  console.log(escapeddata);
   jbutton.click(function(){
   	$.ajax({
   	data: escapeddata,
   	type: "POST",
   	url: "/grid/add_restaurant/",
   	success: function(){
-  		$("#searchresults").empty();
+  		$(searchresults_id).empty();
   		$("#map-canvas").css('display', 'none');
   		location.reload();
   	},
@@ -136,10 +141,11 @@ function createMarker(place, index) {
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 
-$(document).ready(function() {
-  $('#newrestsearch').on('submit', function(e) {e.preventDefault(); return true;});
-	$('#newrestsearch').submit(function(){
-
+$(document).on('submit', '#newrestsearch', function(e) {e.preventDefault(); return true;});
+/*	
+  $('#newrestsearch').submit(function(){
+    current_grid = $(this).closest('table').attr('id');
+    console.log(current_grid);
 		initialize();
 
 		var search = '"' + $('#new-rest-search-params').val()+ '"';
@@ -151,8 +157,22 @@ $(document).ready(function() {
 		service.radarSearch(request, callback);
 		$("#map-canvas").css('display', 'block');
 	});
+*/
 
-});
+$(document).on('submit', "#newrestsearch", function() {
+    current_grid = $(this).closest('table').attr('id');
+    console.log(current_grid);
+    initialize();
+    var rest_search_params = '#new-rest-search-params' + current_grid.toString();
 
-
+    var search = '"' + $(rest_search_params).val()+ '"';
+    var request = {
+      location:london,
+      radius:'10000',
+        name: search,
+    };
+    service.radarSearch(request, callback);
+    var map_id = '#map-canvas' + current_grid.toString();
+    $(map_id).css('display', 'block');
+})
 

@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django_tables2 import RequestConfig
 from grid.tables import RestaurantTable
 from postcodes.models import Postcode
+from custom_registration.models import UserProfile
 import string
 import json
 from django.db.models import Q
@@ -16,7 +17,10 @@ from django.db.models import Q
 def find_users(request):
     if request.user.is_authenticated():
         display_users = None
-        group = GridGroup.objects.get(founder=request.user)
+        group_dict = []
+        for key, value in request.GET.iteritems():
+            group_dict = json.loads(key)
+        group = GridGroup.objects.get(pk=int(group_dict['group']))
         data = None
         for key, value in request.GET.iteritems():
             data = json.loads(key)
@@ -39,7 +43,7 @@ def remove_user(request):
             rest_dict = None
             for key, value in request.POST.iteritems():
                 rest_dict = json.loads(key)
-            gridgroup = GridGroup.objects.get(founder=request.user)
+            gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
             gridgroup.members.remove(rest_dict['removed_id'])
         else:
             print 'no POST'
@@ -53,23 +57,28 @@ def add_friend(request):
             for key, value in request.POST.iteritems():
                 rest_dict = json.loads(key)
             new_friend = User.objects.get(pk=rest_dict['id'])
-            gridgroup = GridGroup.objects.get(founder=request.user)
-            gridgroup.members.add(new_friend)
-            print rest_dict
+            new_friend_profile = UserProfile.objects.get(user=new_friend)
+            gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
+            new_friend_profile.approval_queue.add(gridgroup)
         return HttpResponse(json.dumps({'success':True}))
 
 
 def detail(request, filter=None):
     if request.user.is_authenticated():
-        group = GridGroup.objects.get(founder=request.user)
+        user_profile = UserProfile.objects.get(user=request.user)
+        group = user_profile.default_grid
+        groups = GridGroup.objects.filter(Q(founder=request.user)|Q(members=request.user))
         reviewers = group.members.order_by('username')
         table = TableData(request.user, filter)
         table_data = table.getTableData()
-        all_users = table.getMyUsers(request.user)
+        #all_users = table.getMyUsers(group)
         all_restaurants = table.getRestaurantSequence()
         template = loader.get_template('grid/details.html')
         context = RequestContext(request, {
-            'all_users': all_users,
+            'default_group': group,
+            'groups': groups,
+            #'all_users': all_users,
+            'approval_queue': user_profile.approval_queue.all(),
             'table_data':table_data,
             'all_restaurants': all_restaurants,
             'this_user': request.user
@@ -87,16 +96,19 @@ def update(request):
             user_rest_string = None
             good=None
             ident_list = string.split(request.POST['name'], '-')
-            rest_updated = Restaurant.objects.get(pk=int(ident_list[1])) 
+            rest_updated = Restaurant.objects.get(pk=int(ident_list[1]))
+            grid_updated = GridGroup.objects.get(pk=int(ident_list[0])) 
             good = True if request.POST['good']=='good' else False
             try:
                 this_review = Review.objects.get(restaurant=rest_updated,
-                                                reviewer=request.user)
+                                                reviewer=request.user,
+                                                gridgroup=grid_updated,)
             except(KeyError, Review.DoesNotExist):
                 this_review = Review(restaurant=rest_updated,
                                         review=request.POST['value'],
                                         good=good,
                                         reviewer=request.user,
+                                        gridgroup=grid_updated,
                                         )
             this_review.good = good
             this_review.review = request.POST['value']
@@ -122,10 +134,12 @@ def sort(request):
 def newRestaurant(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
+            # Organize POST JSON dictionary coming from website
             rest_dict = None
             website = None
             phone = None
             for key, value in request.POST.iteritems():
+                print('the key is %s' % key)
                 rest_dict = json.loads(key)
             rest_name = rest_dict['name']
             address = rest_dict['address']
@@ -148,13 +162,54 @@ def newRestaurant(request):
                 except (KeyError, Postcode.DoesNotExist):
                     HttpResponse('Postcode not in system')
             rest_obj = None
+            # Now handle server-side manipulation of info from website
             try: #see if restaurant is already in database for some reason
                 rest_obj = Restaurant.objects.get(name=rest_name, address=address, post_code=post_obj)
             except (KeyError, Restaurant.DoesNotExist):
                 rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj, telephone=phone, website=website)
                 rest_obj.save()
             rest_obj.users_interested.add(request.user.pk)
+            grid = GridGroup.objects.get(pk=int(rest_dict['group']))
+            grid.restaurantsTracked.add(rest_obj.pk)
             return HttpResponse(json.dumps(rest_dict))
         return HttpResponse('Did not use POST method')
     else:
         return HttpResponseRedirect('/login/')
+
+def creategrid(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            new_grid = GridGroup(founder=request.user, private=request.POST['private'], name=request.POST['name'])
+            new_grid.save()
+            return HttpResponseRedirect('/grid/')
+    else:
+        return HttpResponseRedirect('/login/')
+
+def updategrid(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            request_dict = []
+            for key, value in request.POST.iteritems():
+                request_dict = json.loads(key)
+            print request_dict
+            grid = GridGroup.objects.get(pk=int(request_dict['id']))
+            print request_dict['name']
+            grid.name = request_dict['name']
+            grid.save()
+            return HttpResponse(json.dumps({'success':True}))
+
+def approvegrid(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            request_dict = []
+            for key, value in request.POST.iteritems():
+                request_dict = json.loads(key)
+            grid = GridGroup.objects.get(pk=int(request_dict['approved_id']))
+            grid.members.add(request.user.pk)
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.approval_queue.remove(grid.pk)
+            return HttpResponse(json.dumps({'success':True}))
+    else:
+        return HttpResponseRedirect('/login/')            
+
+

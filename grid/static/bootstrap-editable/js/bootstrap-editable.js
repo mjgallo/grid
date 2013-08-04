@@ -116,11 +116,10 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                     });
                     this.input.$input.removeAttr('disabled');
                     var myInput = this.$form;
-                    this.$form.find('.editable-submit, .editable-bad, editable-good').removeAttr('disabled');
+                    this.$form.find('.editable-submit, .editable-bad, .editable-good').removeAttr('disabled');
                     this.input.value2input(this.value);
                     var editform = this;
                     //attach submit handler
-                    
                     $('#submissionform button[type="submit"]').click(function() {
                         editform.$form.submit({good:$(this).attr("name")},$.proxy(editform.submit, editform));
                     });
@@ -209,6 +208,7 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         },
 
         submit: function(e) {
+            console.log("in submit")
             e.stopPropagation();
             e.preventDefault();
             var error,
@@ -4373,7 +4373,7 @@ Editableform based on Twitter Bootstrap
     });    
     
     //buttons
-    $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="icon-ok icon-white"></i></button>'+
+    $.fn.editableform.buttons = '<button type="submit" name="filler" class="btn btn-primary editable-submit"><i class="icon-ok icon-white"></i></button>'+
                                 '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';         
     
 

@@ -8,17 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Person'
-        db.create_table(u'grid_person', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-        ))
-        db.send_create_signal(u'grid', ['Person'])
+        # Adding field 'GridGroup.private'
+        db.add_column(u'grid_gridgroup', 'private',
+                      self.gf('django.db.models.fields.BooleanField')(default=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'Person'
-        db.delete_table(u'grid_person')
+        # Deleting field 'GridGroup.private'
+        db.delete_column(u'grid_gridgroup', 'private')
 
 
     models = {
@@ -58,25 +56,40 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'grid.person': {
-            'Meta': {'object_name': 'Person'},
+        u'grid.gridgroup': {
+            'Meta': {'object_name': 'GridGroup'},
+            'founder': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_owner'", 'to': u"orm['auth.User']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'members': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'private': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'restaurantsTracked': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['grid.Restaurant']", 'null': 'True', 'blank': 'True'})
         },
         u'grid.restaurant': {
             'Meta': {'object_name': 'Restaurant'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'post_code': ('django.db.models.fields.CharField', [], {'max_length': '10'})
+            'post_code': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['postcodes.Postcode']"}),
+            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'users_interested': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         u'grid.review': {
             'Meta': {'object_name': 'Review'},
             'good': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'gridgroup': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_association'", 'to': u"orm['grid.GridGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
             'restaurant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grid.Restaurant']"}),
             'review': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})
+        },
+        u'postcodes.postcode': {
+            'Meta': {'object_name': 'Postcode'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.contrib.gis.db.models.fields.PointField', [], {}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '8', 'db_index': 'True'})
         }
     }
 

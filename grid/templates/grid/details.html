@@ -22,13 +22,14 @@
     <script src="/static/bootstrap/js/bootstrap-tooltip.js"></script>
     <script src="/static/bootstrap/js/bootstrap-popover.js"></script>
     <!-- custom stuff -->
+    <script src="/static/grid/jquery.cookie.js"></script>
     <script src="/static/grid/myscript.js"></script>
     <script src="/static/grid/usertable.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/grid/mystyle.css">	
 
     <!-- GOOGLE MAPS JAVASCRIPT AND CSS AND MY CUSTOM-->
     <link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css"> 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvkcMtW6Hd560BYcB2MTKS4L-yXUpZ7as&sensor=false&libraries=places,visualization&v=3.exp"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyCvkcMtW6Hd560BYcB2MTKS4L-yXUpZ7as&libraries=places,visualization&v=3.exp"></script>
     <script src="/static/grid/locationsearch.js"></script>
 
 <!-- ACTUAL HTML-->
@@ -37,44 +38,82 @@
 <div style="text-align:right"><a style="margin-right:80px" href="http://grid.gridique.com/logout/">logout</a></div>
 <div style="display:inline-block;width:60px"></div>
 <h1 style="display:inline-block">welcome {{ this_user.username }}</h1>
-<div style="height:30px"></div>
-<div style="width:60px;display:inline-block"></div>
+<div style="height:10px"></div>
+<div style="height:30px">
+<div style="width:250px;display:inline-block"></div>
 
+<div class="dropdown" style="display:inline-block;vertical-align:top">
+  <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+    Approve requests to join ({{ approval_queue|length}})
+    <b class="caret"></b>
+  </a>
+
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+     {% if not approval_queue %}
+       <li><a tabindex="-1" href="#">No requests to approve</a></li>
+       {% else %}
+     {% for grid in approval_queue %}
+        <li><a id={{ grid.id }} tabindex="-1" class="approvegrid" href="#"><b>{{ grid.name }}</b> by <i>{{ grid.founder.username }}</i></a></li>
+        {% endfor %}
+        {% endif %}
+  </ul>
+</div>
+</div>
+<ul class="nav nav-tabs" id="myTab">
+	{% for group in table_data %}
+	<li id={{ group.id }} {% if group.id == default_group.id %}class="active"{% endif %}><a data-toggle="tab" href={{ group.link_id }}>
+
+{{ group.name }}
+		</a></li>
+	{% endfor %}
+	<li><a href="#myModalGrid" id="creategrid" class="addtab">Create a new grid +</a></li>
+	<!--<li><a href="#grid3" class="addtab">Join a friend's grid</a></li>-->
+</ul>
+
+
+<!-- TABLE DIV BEGINS HERE-->
+<div class="tab-content">
+<div class="tab-pane" id="creategrid"></div>
+<div class="tab-pane" id="findgrid"></div>
+{% for group in table_data %}
+<div {% if group.id == default_group.id %}class="tab-pane active"{% else %}class="tab-pane"{% endif %} id={{ group.element_id }} style="margin-left:60px; margin-right:60px; margin-bottom:60px">
+<div id={{ group.id }}>
 <form id="newfilter" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="post" autocomplete="off" action="/grid/sort/">
   <input type="text" id="new-filter-search-params" placeholder="Filter by postcode" class="input-medium search-query" name="filtername">
   <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
-
-
-<!-- TABLE DIV BEGINS HERE-->
-
-<div style="margin-left:60px; margin-right:60px; margin-bottom:60px">
-<table class="table table-bordered" style="table-layout:fixed"> 
+{% if this_user.username == group.founder %}
+<a href="#myModalGridUpdate" class="editgrid" style="display:inline-block">You're the founder - rename it</a>
+{% endif %}
+</div>
+<table id={{ group.id }} class="table table-bordered" style="table-layout:fixed"> 
 	<thead class=tablehead>
 
 		<tr style="height:15px">
 			<th style="width:140px;max-width:140px"> </th>
-			{% for user in all_users %}
+			{% for user in group.users %}
 			<th style="width:140px;max-width:140px">
 				<p style="display:inline-block;text-align:left">{{ user.username }}</p>
-				{% if user != this_user %}
+				<!--{% if user != this_user %}
 				<button type="button" id={{ user.pk }} class="close remove-user" data-dismiss="modal" aria-hidden="true" >×</button>
-				{% endif %}
+				{% endif %} -->
 			</th>
 			{% endfor %}
-			<th style="width:140px;max-width:140px;text-align:center"><a href="#myModal" id="addfriend" role="button" class="btn btn">Add a friend</a>
+			{% if this_user.username == group.founder %}
+			<th style="width:140px;max-width:140px;text-align:center"><a href="#myModal" id="addfriend" role="button" class="btn btn">Invite a friend</a>
 			</th>
+			{% endif %}
 		</tr>
 	</thead>
 	<tbody>
-	{% if not table_data %}
+	{% if not group.data %}
 		<tr>
 			<td colspan=2>Search for restaurants below to start adding reviews</td>
 			<td></td>
 		</tr>
 
 	{% else %}
-	{% for restaurant in table_data %}
+	{% for restaurant in group.data %}
 		<tr class="rows">
 			<td style="width:120px">
 				<a href="#" id="tester" rel="popover" class="showmap" data-toggle="popover" data-location={{ restaurant.0.restaurant.address|spacify }},{{ restaurant.0.restaurant.post_code.name|spacify }}>
@@ -100,7 +139,7 @@
 					>
 
 						<div href=# 	
-							id={{ user_review.reviewer.id }}-{{ user_review.restaurant.id }}
+							id={{ group.id }}-{{ user_review.restaurant.id }}
 
 							data-type="textarea"
 							data-pk="1"
@@ -123,31 +162,46 @@
 				</div>
 			</td>
 			{% endfor %}
+			{% if this_user.username == group.founder %}
 			<td class="reviewbox">
 			</td>
+			{% endif %}
 		</tr>
 	{% endfor %}
 	{% endif %}
 	<tr id="searchrow">
 		<td id="searchbox" colspan=2 style="width:280px;max-width:280px">
 
+{% with group_string=group.id|stringformat:"s" %}
 <form id="newrestsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
-  <input type="text" id="new-rest-search-params" placeholder="Add a restaurant" class="input-medium search-query">
+  <input type="text" id={{ "new-rest-search-params"|add:group_string }} placeholder="Add a restaurant" class="input-medium search-query">
   <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
-<div id="searchresults" style="display:none"></div>
+<div id={{ "searchresults"|add:group_string }} style="display:none"></div>
 
 		</td>
-		<td colspan={{ all_users|length }} style="overflow:auto">
-			<div id="map-canvas" style="display:none;height:338px;width:338px"></div>
+		<td 
+		{% if this_user.username == group.founder %}
+		colspan={{ group.users|length }} 
+		{% else %}
+		colspan={{ group.users|length|add:"-1" }}
+		{% endif %}
+		style="overflow:auto">
+			<div id={{ "map-canvas"|add:group_string }} style="display:none;height:338px;width:338px"></div>
 		</td>
+		{% endwith %}
 
 	</tr>
 	</tbody>
 </table>
+</div>
+{% endfor %}
+</div> <!--end of tab pane-->
 <div style="float:right; width:25%" ></div>
 <div style="height:60px"></div>
-<!-- Modal -->
+
+
+<!-- Modal User add -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -179,4 +233,61 @@
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
+
+<!-- Modal New Grid -->
+<div id="myModalGrid" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Create a new grid</h3>
+  </div>
+
+<div class="modal-body" id="modal-content">
+
+<form action="/grid/create_grid/" method="POST">
+  <fieldset>
+    <label>Grid name</label>
+    <input type="text" name="name" placeholder="Type something…">
+    <label>Description</label>
+    <textarea rows=3 name="description" placeholder="Tell your friends the theme"></textarea>
+
+    <label class="checkbox">
+      <input type="checkbox" name="private" checked value="True"> Prevent grid from showing up in other searches
+    </label>
+    <button type="submit" class="btn">Submit</button>
+  </fieldset>
+</form>
+
+</div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+ </div>
+</div>
+
+<!-- Modal Update Grid -->
+<div id="myModalGridUpdate" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Update the grid</h3>
+  </div>
+
+<div class="modal-body" id="modal-content">
+
+<form id="updategrid">
+  <fieldset>
+    <label>New name</label>
+    <input id="newgridname" type="text" name="nameupdate" placeholder="Type something…">
+    <label>New Description</label>
+    <textarea id="newgriddescription" rows=3 name="descriptionupdate" placeholder="Tell your friends the theme"></textarea>
+
+    <button id="updategridbutton" type="submit" class="btn">Submit</button>
+  </fieldset>
+</form>
+
+</div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+ </div>
+</div>
+
 </html>
+

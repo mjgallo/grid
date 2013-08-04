@@ -15,8 +15,6 @@ class Restaurant(geomodels.Model):
 
 	objects = geomodels.GeoManager()
 
-
-
 	def __unicode__(self):
 		return self.name
 
@@ -26,13 +24,17 @@ class Review(geomodels.Model):
 	good = geomodels.BooleanField()
 	reviewer = geomodels.ForeignKey(User, null=True)
 	last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
+	gridgroup = geomodels.ForeignKey('GridGroup', related_name='grid_group_association')
 
 	def __unicode__(self):
 		return self.review + ' by ' + self.reviewer.username
 
 class GridGroup(geomodels.Model):
-	founder = models.ForeignKey(User, unique=True, related_name='grid_group_owner')
+	name = models.CharField(max_length=50)
+	private = models.BooleanField(default=True)
+	founder = models.ForeignKey(User, related_name='grid_group_owner')
 	members = models.ManyToManyField(User, blank=True, null=True)
+	restaurantsTracked = models.ManyToManyField(Restaurant, blank=True, null=True)
 
 	def __unicode__(self):
 		return self.founder.username

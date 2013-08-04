@@ -1,11 +1,10 @@
-$(document).ready(function() {
+$(document).on('click', '#addfriend', function(){
 	$('#newfriendsearch').on('click', function(e) {e.preventDefault(); return true;});
 	
 	$('#myModal').show(0, onModalShow);
 	$('#myModal').find('form').submit(runSearch);
-	$('#addfriend').click(function(){
-		
-
+	console.log('clicked');
+		current_grid = $(this).closest('table').attr('id');
         var table = document.getElementById('tbody');
 
 		
@@ -13,6 +12,7 @@ $(document).ready(function() {
   			type: "GET",
   			url: "/grid/find_users/",
   			dataType:'json',
+  			data: JSON.stringify({'group': current_grid}),
   		});
 
 		request.done(function(msg) {
@@ -51,7 +51,6 @@ $(document).ready(function() {
 	});
 
 
-});
 
 function onModalShow(){
 	$('#submit-button3').on('click', runSearch);
@@ -106,9 +105,49 @@ function addNewFriend(id) {
 			type: "POST",
 			url: "/grid/add_friend/",
 			dataType:'json',
-			data:JSON.stringify({'id':id.data}),
+			data:JSON.stringify({'id':id.data, 'group': current_grid}),
 		}).done(function(msg) {
 		$('#myModal').modal('hide');
 		location.reload();
 });
 }
+
+$(document).ready(function(){
+	$("#creategrid").click(function(){
+		$('#myModalGrid').modal('toggle');
+		current_grid = $(this).closest('table').attr('id');
+	});
+});
+
+$(document).on('click', '.editgrid', function() {
+	$('#updategrid').on('submit', function(e) {e.preventDefault(); return true;});
+	console.log('i am clicked');
+	$('#myModalGridUpdate').modal('toggle');
+	var current_grid = $(this).closest('div').attr('id');
+	$(document).on('submit', '#updategrid', function(){
+		var new_name= $('#newgridname').val();
+		console.log(new_name);
+		var new_description = $('#newgriddescription').val();
+		var newrequest = $.ajax({
+			type: "POST",
+			url: "/grid/update_grid/",
+			dataType:'json',
+			data:escape(JSON.stringify({'name':new_name, 'description': new_description, 'id': current_grid.toString()})),
+		}).done(function(msg) {
+		$('#myModalGridUpdate').modal('hide');
+		location.reload();
+	})
+});
+});
+
+$(document).on('click', '.approvegrid', function() {
+	var approved_grid = $(this).attr('id');
+			var newrequest = $.ajax({
+			type: "POST",
+			url: "/grid/approve_grid/",
+			dataType:'json',
+			data:JSON.stringify({'approved_id':approved_grid.toString()}),
+		}).done(function(msg) {
+		location.reload();
+});
+	});

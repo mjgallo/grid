@@ -8,83 +8,18 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Restaurant'
-        db.create_table(u'grid_restaurant', (
+        # Adding model 'UserProfile'
+        db.create_table(u'custom_registration_userprofile', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
-            ('address', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('post_code', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['postcodes.Postcode'])),
-            ('telephone', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
-            ('website', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
+            ('default_grid', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grid.GridGroup'])),
         ))
-        db.send_create_signal(u'grid', ['Restaurant'])
-
-        # Adding M2M table for field users_interested on 'Restaurant'
-        m2m_table_name = db.shorten_name(u'grid_restaurant_users_interested')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('restaurant', models.ForeignKey(orm[u'grid.restaurant'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['restaurant_id', 'user_id'])
-
-        # Adding model 'Review'
-        db.create_table(u'grid_review', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('restaurant', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grid.Restaurant'])),
-            ('review', self.gf('django.db.models.fields.CharField')(max_length=160)),
-            ('good', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('reviewer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
-            ('last_updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
-            ('gridgroup', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grid_group_association', to=orm['grid.GridGroup'])),
-        ))
-        db.send_create_signal(u'grid', ['Review'])
-
-        # Adding model 'GridGroup'
-        db.create_table(u'grid_gridgroup', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('founder', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grid_group_owner', to=orm['auth.User'])),
-        ))
-        db.send_create_signal(u'grid', ['GridGroup'])
-
-        # Adding M2M table for field members on 'GridGroup'
-        m2m_table_name = db.shorten_name(u'grid_gridgroup_members')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('gridgroup', models.ForeignKey(orm[u'grid.gridgroup'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['gridgroup_id', 'user_id'])
-
-        # Adding M2M table for field restaurantsTracked on 'GridGroup'
-        m2m_table_name = db.shorten_name(u'grid_gridgroup_restaurantsTracked')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('gridgroup', models.ForeignKey(orm[u'grid.gridgroup'], null=False)),
-            ('restaurant', models.ForeignKey(orm[u'grid.restaurant'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['gridgroup_id', 'restaurant_id'])
+        db.send_create_signal(u'custom_registration', ['UserProfile'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Restaurant'
-        db.delete_table(u'grid_restaurant')
-
-        # Removing M2M table for field users_interested on 'Restaurant'
-        db.delete_table(db.shorten_name(u'grid_restaurant_users_interested'))
-
-        # Deleting model 'Review'
-        db.delete_table(u'grid_review')
-
-        # Deleting model 'GridGroup'
-        db.delete_table(u'grid_gridgroup')
-
-        # Removing M2M table for field members on 'GridGroup'
-        db.delete_table(db.shorten_name(u'grid_gridgroup_members'))
-
-        # Removing M2M table for field restaurantsTracked on 'GridGroup'
-        db.delete_table(db.shorten_name(u'grid_gridgroup_restaurantsTracked'))
+        # Deleting model 'UserProfile'
+        db.delete_table(u'custom_registration_userprofile')
 
 
     models = {
@@ -124,6 +59,12 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'custom_registration.userprofile': {
+            'Meta': {'object_name': 'UserProfile'},
+            'default_grid': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grid.GridGroup']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
+        },
         u'grid.gridgroup': {
             'Meta': {'object_name': 'GridGroup'},
             'founder': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_owner'", 'to': u"orm['auth.User']"}),
@@ -142,16 +83,6 @@ class Migration(SchemaMigration):
             'users_interested': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
-        u'grid.review': {
-            'Meta': {'object_name': 'Review'},
-            'good': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'gridgroup': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grid_group_association'", 'to': u"orm['grid.GridGroup']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
-            'restaurant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grid.Restaurant']"}),
-            'review': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
-            'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})
-        },
         u'postcodes.postcode': {
             'Meta': {'object_name': 'Postcode'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -160,4 +91,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['grid']
+    complete_apps = ['custom_registration']

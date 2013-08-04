@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from grid.models import GridGroup
+from custom_registration.models import UserProfile
 from custom_registration.forms import CustomRegistrationForm
 from django.template import RequestContext, loader
 from django.core.context_processors import csrf
@@ -15,12 +16,13 @@ def register(request):
         form = CustomRegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            new_group = GridGroup(founder=new_user)
+            new_group = GridGroup(founder=new_user, name='My first grid')
             new_group.save()
+            new_user_profile = UserProfile(user=new_user, default_grid=new_group)
+            new_user_profile.save()
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password1'])
             login(request, new_user)
-
             return HttpResponseRedirect("/grid/")
         else:
             template = loader.get_template('registration/login.html')
