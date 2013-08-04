@@ -9,6 +9,7 @@ from postcodes.models import Postcode
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        print("running import")
         Postcode.objects.all().delete()
         count = 0
         with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'mycodes2.csv'))) as csvfile: 
