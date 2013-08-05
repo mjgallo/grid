@@ -180,3 +180,4 @@ LOGIN_REDIRECT_URL='/login/'
 LOGIN_URL='/login/'
 
 APPEND_SLASH=True
+

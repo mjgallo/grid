@@ -24,16 +24,16 @@ def find_users(request):
         data = None
         for key, value in request.GET.iteritems():
             data = json.loads(key)
-        try:
+        try: #this is used if a search string is provided
             users = User.objects.filter(Q(username__icontains=data['search-string'])|
                         Q(first_name__icontains=data['search-string'])|
                         Q(last_name__icontains=data['search-string'])).exclude(
                         pk__in=group.members.all().values_list(
-                        'pk', flat=True)).exclude(pk=request.user.pk)
-        except:
+                        'pk', flat=True)).exclude(pk=request.user.pk).exclude(is_staff=True)
+        except: #DEFAULTS here, no search string provided
             users = User.objects.exclude(
                         pk__in=group.members.all().values_list(
-                        'pk', flat=True)).exclude(pk=request.user.pk)
+                        'pk', flat=True)).exclude(pk=request.user.pk).exclude(is_staff=True)
         display_users = users.all().values('username', 'id', 'first_name', 'last_name')
         return HttpResponse(json.dumps(list(display_users)))
 
