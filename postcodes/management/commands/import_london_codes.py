@@ -15,7 +15,7 @@ class Command(BaseCommand):
         with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'mycodes2.csv'))) as csvfile: 
             for row in csv.reader(csvfile):
                 try:
-                    name = row[0].upper().strip().replace('  ', ' ')
+                    name = row[0]
                     location = Point(map(float, row[1:3]))
                 except ValueError:
                     print "I: skipping %r" % row
@@ -24,5 +24,5 @@ class Command(BaseCommand):
                 Postcode.objects.create(name=name, location=location)
 
                 count += 1
-                if count % 10000 == 0:
+                if count % 1000 == 0:
                     print "Imported %d" % count

@@ -21,6 +21,6 @@ urlpatterns = patterns('',
     url(r'^register/', include('custom_registration.urls', namespace="custom_registration")),
     url(r'^login/$', login),
     url(r'^logout/$', logout, {'next_page':'/login/'}),
-    url(r'^.*/$', reg_views.wrongUrl, name='wrongUrl'),
+    url(r'^.*$', reg_views.wrongUrl, name='wrongUrl'),
 
 )
