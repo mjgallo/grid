@@ -27,9 +27,9 @@ return_email = InvitationKey.objects.return_email
 def invited(request, invitation_key=None):
     if invitation_key and is_key_valid(invitation_key):
         template = 'invitation/invited.html'
+        return render_to_response(template, {'form': RegistrationForm, 'invitation_key': invitation_key, 'email':return_email(invitation_key)})
     else:
-        template = 'invitation/wrong_invitation_key.html'
-    return render_to_response(template, {'form': RegistrationForm, 'invitation_key': invitation_key, 'email':return_email(invitation_key)})
+        return HttpResponseRedirect('/accounts/register/')
 
 def register(request, success_url=None,
             form_class=RegistrationForm, profile_callback=None,
@@ -40,7 +40,7 @@ def register(request, success_url=None,
         if extra_context is None:
             extra_context = {'invitation_key': request.REQUEST['invitation_key'], 'grid':return_grid(request.REQUEST['invitation_key'])}
         else:
-            extra_context.update({'invitation_key': invitation_key, 'grid':return_grid(request.REQUEST['invitation_key']), 'email':return_email(request.REQUEST['invitation_key'])})
+            extra_context.update({'invitation_key': request.REQUEST['invitation_key'], 'grid':return_grid(request.REQUEST['invitation_key']), 'email':return_email(request.REQUEST['invitation_key'])})
         form = RegistrationForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -52,9 +52,9 @@ def register(request, success_url=None,
             login(request, new_user)
             return HttpResponseRedirect('/grid/')
         else:
-            return render_to_response('invitation/invited.html', {'form': form, 'invitation_key': invitation_key, 'email':return_email(request.REQUEST['invitation_key'])})
+            return render_to_response('invitation/invited.html', {'form': form, 'invitation_key': request.REQUEST['invitation_key'], 'email':return_email(request.REQUEST['invitation_key'])})
     else:
-        return HttpResponse('not valid key')
+        return HttpResponseRedirect('/accounts/register/')
 
 def invite(request, success_url=None,
             form_class=InvitationKeyForm,
@@ -65,6 +65,7 @@ def invite(request, success_url=None,
             response = json.loads(key)
         form = form_class(data=response)
         if form.is_valid():
+            print('in form is valid')
             invitation = InvitationKey.objects.create_invitation(request.user, form.cleaned_data['grid'], form.cleaned_data['email'])
             invitation.send_to(form.cleaned_data["email"])
             # success_url needs to be dynamically generated here; setting a

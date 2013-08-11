@@ -56,11 +56,12 @@ $(document).on('click', '#addfriend', function(){
 
 
 function onModalShow(){
-	$('#submit-button3').on('click', runSearch);
-	$('#submit-button5').on('click', inviteFriend);
+	$('#submit-button3').off('click').on('click', runSearch);
+	$('#submit-button5').off('click').on('click', inviteFriend);
 }
 
 function inviteFriend(){
+	console.log('invitingfriend');
 	var request = $.ajax({
 			type: "POST",
 			url: "/invite/send/",
@@ -236,7 +237,7 @@ function joinNewGrid(id) {
 }
 
 function onJoinModalShow(){
-	$('#submit-button4').on('click', runGridSearch);
+	$('#submit-button4').off('click').on('click', runGridSearch);
 }
 
 function runGridSearch(){
