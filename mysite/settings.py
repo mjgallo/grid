@@ -135,6 +135,9 @@ INSTALLED_APPS = (
     'postcodes',
     'django.contrib.humanize',
     'south',
+    'registration',
+    'crispy_forms',
+    'invite',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -181,3 +184,14 @@ LOGIN_URL='/login/'
 
 APPEND_SLASH=True
 
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+ACCOUNT_ACTIVATION_DAYS = 5
+
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
+DEFAULT_FROM_EMAIL = 'info@thegridworks.com'
+
+ACCOUNT_INVITATION_DAYS = 7
+INVITATIONS_PER_USER = 100000

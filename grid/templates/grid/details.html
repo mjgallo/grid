@@ -29,7 +29,7 @@
 
     <!-- GOOGLE MAPS JAVASCRIPT AND CSS AND MY CUSTOM-->
     <link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css"> 
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyCvkcMtW6Hd560BYcB2MTKS4L-yXUpZ7as&libraries=places,visualization&v=3.exp"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places,visualization&v=3.exp"></script>
     <script src="/static/grid/locationsearch.js"></script>
 
 <!-- ACTUAL HTML-->
@@ -39,26 +39,28 @@
 <div style="display:inline-block;width:60px"></div>
 <h1 style="display:inline-block">welcome {{ this_user.username }}</h1>
 <div style="height:10px"></div>
-<div style="height:30px">
-<div style="width:250px;display:inline-block"></div>
+<div style="height:50px">
 
-<div class="dropdown" style="display:inline-block;vertical-align:top">
+<div class="dropdown" style="display:inline-block; padding:15px">
   <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
-    Approve requests to join ({{ approval_queue|length}})
+    Approve invitations to join ({{ approval_queue|length}})
     <b class="caret"></b>
   </a>
 
   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
      {% if not approval_queue %}
-       <li><a tabindex="-1" href="#">No requests to approve</a></li>
+       <li><a tabindex="-1" href="#">No invitations to approve</a></li>
        {% else %}
      {% for grid in approval_queue %}
         <li><a id={{ grid.id }} tabindex="-1" class="approvegrid" href="#"><b>{{ grid.name }}</b> by <i>{{ grid.founder.username }}</i></a></li>
         {% endfor %}
         {% endif %}
+
   </ul>
 </div>
+<a href="#myModalJoin" id="joingrid" style="display:inline-block;padding:20px" class="addtab">Find a friend's grid to join</a>
 </div>
+
 <ul class="nav nav-tabs" id="myTab">
 	{% for group in table_data %}
 	<li id={{ group.id }} {% if group.id == default_group.id %}class="active"{% endif %}><a data-toggle="tab" href={{ group.link_id }}>
@@ -77,14 +79,33 @@
 <div class="tab-pane" id="findgrid"></div>
 {% for group in table_data %}
 <div {% if group.id == default_group.id %}class="tab-pane active"{% else %}class="tab-pane"{% endif %} id={{ group.element_id }} style="margin-left:60px; margin-right:60px; margin-bottom:60px">
-<div id={{ group.id }}>
+<div class="overarchingdiv" id={{ group.id }}>
 <form id="newfilter" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="post" autocomplete="off" action="/grid/sort/">
   <input type="text" id="new-filter-search-params" placeholder="Filter by postcode" class="input-medium search-query" name="filtername">
   <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
+
 {% if this_user.username == group.founder %}
-<a href="#myModalGridUpdate" class="editgrid" style="display:inline-block">You're the founder - rename it</a>
+<div class="dropdown" style="display:inline-block">
+  <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+    ({{ group.request_queue|length}}) friends have asked to join this group
+    <b class="caret"></b>
+  </a>
+
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+     {% if not group.request_queue %}
+       <li><a tabindex="-1" href="#">No requests to approve</a></li>
+       {% else %}
+     {% for user in group.request_queue %}
+        <li><a id={{ user.id }} tabindex="-1" class="approvemember" href="#"><b>{{ user.username }}</b> </a></li>
+        {% endfor %}
+        {% endif %}
+
+  </ul>
+</div>
+<a href="#myModalGridUpdate" style="padding:30px" class="editgrid" style="display:inline-block">Rename grid</a>
 {% endif %}
+
 </div>
 <table id={{ group.id }} class="table table-bordered" style="table-layout:fixed"> 
 	<thead class=tablehead>
@@ -108,7 +129,8 @@
 	<tbody>
 	{% if not group.data %}
 		<tr>
-			<td colspan=2>Search for restaurants below to start adding reviews</td>
+			<td colspan={% if this_user.username == group.founder %}
+{{ group.users|length|add:"1" }}{% else %}{{ group.users|length }}{% endif %}>Search for restaurants below to start adding reviews</td>
 			<td></td>
 		</tr>
 
@@ -228,11 +250,52 @@
       </tbody>
     </table>
 
+  <form id="newfriendinvitation" class="form-search" style="margin-top:10px;margin-bottom:10px" method="post">
+  <label>Didn't find who you were looking for? Invite them to gridworks.</label>
+  <input type="text" id="invitationemail" placeholder="send away" class="input-medium search-query">
+  <button id="submit-button5" type="submit" class="btn btn-primary"><i class="icon-envelope icon-white"></i></button>
+</form>	
+
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
+
+<!-- ********** Modal join grid ******** -->
+<div id="myModalJoin" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Look for a new grid to join</h3>
+  </div>
+  <div class="modal-body" id="modal-content">
+
+  	<form id="newgridjoin" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
+  <input type="text" id="gridjoinparams" placeholder="Search" class="input-medium search-query">
+  <button id="submit-button4" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+</form>	
+  	    <table id="joingridtable" class="table table-condensed table-hover">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Founder</th>
+          <th>Grid name</th>
+          <th>Description</th>
+          <th>Number of members</th>
+          <th style="width: 36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="tbodyjoin">
+      </tbody>
+    </table>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
 
 <!-- Modal New Grid -->
 <div id="myModalGrid" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

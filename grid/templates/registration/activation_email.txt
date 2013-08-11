@@ -1,0 +1,8 @@
+Thanks for registering for gridworks. Please click on the link to confirm your account:
+
+http://thegridworks.com/accounts/activate/{{ activation_key }}/
+
+Sincerely,
+the gridworks team
+
+p.s. If you believe you have received this email in error, please let us know at info@thegridworks.com.

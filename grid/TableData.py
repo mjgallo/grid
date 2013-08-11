@@ -48,7 +48,7 @@ class TableData:
     def organizeSet(self, founder, filter):
         print ('this is how i organize %s' % filter)
         group_list = []
-        groups = GridGroup.objects.filter(Q(founder=founder)|Q(members=founder))
+        groups = GridGroup.objects.filter(Q(founder=founder)|Q(members=founder)).distinct()
         for group in groups.all():
             self.setAllRestaurants(group, filter)
             table_list = []
@@ -64,7 +64,7 @@ class TableData:
                 table_list.append(restaurant_list)
             element_id = "grid" + str(group.id)
             link_id = "#" + element_id
-            group_list.append({'founder': group.founder.username, 'name':group.name, 'id':group.id, 'data':table_list, 'users':user_list, 'element_id':element_id, 'link_id':link_id})
+            group_list.append({'request_queue':group.request_queue.all(), 'founder': group.founder.username, 'name':group.name, 'id':group.id, 'data':table_list, 'users':user_list, 'element_id':element_id, 'link_id':link_id})
         return group_list
 
     def isPostcode(self, filter):

@@ -33,8 +33,9 @@ class GridGroup(geomodels.Model):
 	name = models.CharField(max_length=50)
 	private = models.BooleanField(default=True)
 	founder = models.ForeignKey(User, related_name='grid_group_owner')
-	members = models.ManyToManyField(User, blank=True, null=True)
+	members = models.ManyToManyField(User, blank=True, null=True, related_name="current_members")
 	restaurantsTracked = models.ManyToManyField(Restaurant, blank=True, null=True)
+	request_queue = models.ManyToManyField(User, blank=True, null=True, related_name="pending_requests")
 
 	def __unicode__(self):
 		return self.founder.username

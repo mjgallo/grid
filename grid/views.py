@@ -14,6 +14,47 @@ import string
 import json
 from django.db.models import Q
 
+
+def find_grid(request):
+    if request.user.is_authenticated():
+        group_list=[]
+        group_queryset=None
+        data = None
+        for key, value in request.GET.iteritems():
+            data = json.loads(key)
+        try:
+            group_queryset = GridGroup.objects.filter(Q(founder__username__icontains=data['search-string'])|
+                        Q(name__icontains=data['search-string'])).exclude(
+                        members=request.user).exclude(founder=request.user).exclude(
+                        request_queue=request.user)
+        except:
+            group_queryset = GridGroup.objects.all().exclude(members=request.user).exclude(founder=request.user).exclude(request_queue=request.user)
+        for group in group_queryset:
+            group_list.append({'id':group.id, 'founder': group.founder.username, 'name': group.name, 'count': group.members.count()})
+        return HttpResponse(json.dumps(list(group_list)))
+
+def request_grid(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            response = None
+            for key, value in request.POST.iteritems():
+                response = json.loads(key)
+            grid = GridGroup.objects.get(pk=response['id'])
+            grid.request_queue.add(request.user.pk)
+        return HttpResponse(json.dumps({'success':True}))
+
+def approve_request(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                rest_dict = json.loads(key)
+            grid = GridGroup.objects.get(pk=int(rest_dict['grid']))
+            grid.members.add(int(rest_dict['approved_id']))
+            grid.request_queue.remove(int(rest_dict['approved_id']))
+            grid.save()
+            return HttpResponse(json.dumps({'success':True}))
+
 def find_users(request):
     if request.user.is_authenticated():
         display_users = None
@@ -36,6 +77,14 @@ def find_users(request):
                         'pk', flat=True)).exclude(pk=request.user.pk).exclude(is_staff=True)
         display_users = users.all().values('username', 'id', 'first_name', 'last_name')
         return HttpResponse(json.dumps(list(display_users)))
+
+def invite_user(request):
+    if request.user.is_authenticated():
+        group_dict = []
+        for key, value in request.POST.iteritems():
+            group_dict = json.loads(key)
+        print group_dict['email']
+        return HttpResponse(json.dumps({'success':True}))    
 
 def remove_user(request):
     if request.user.is_authenticated():
