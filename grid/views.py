@@ -30,7 +30,8 @@ def find_grid(request):
         except:
             group_queryset = GridGroup.objects.all().exclude(members=request.user).exclude(founder=request.user).exclude(request_queue=request.user)
         for group in group_queryset:
-            group_list.append({'id':group.id, 'founder': group.founder.username, 'name': group.name, 'count': group.members.count()})
+            group_list.append({'id':group.id, 'founder': group.founder.username, 'name': group.name, 
+                'count': (group.members.count()+1), 'restaurants':group.restaurantsTracked.count(), 'reviews':Review.objects.filter(gridgroup=group).count()})
         return HttpResponse(json.dumps(list(group_list)))
 
 def request_grid(request):

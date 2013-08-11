@@ -209,6 +209,10 @@ $(document).on('click', '#joingrid', function(){
 	            var cell4 = row.insertCell(3);
 	            var cell5 = row.insertCell(4);
 	            cell5.innerHTML = msg[i].count;
+	            var cell6 = row.insertCell(5);
+	            cell6.innerHTML = msg[i].restaurants;
+	            var cell7 = row.insertCell(6);
+	            cell7.innerHTML = msg[i].reviews;
 	            $(row).on('click', msg[i].id, joinNewGrid);
         }}
 			$('#myModalJoin').modal();
@@ -272,6 +276,10 @@ function runGridSearch(){
 	            var cell4 = row.insertCell(3);
 	            var cell5 = row.insertCell(4);
 	            cell5.innerHTML = msg[i].count;
+	            var cell6 = row.insertCell(5);
+	            cell6.innerHTML = msg[i].restaurants;
+	            var cell7 = row.insertCell(6);
+	            cell7.innerHTML = msg[i].reviews;
 	            $(row).on('click', msg[i].id, joinNewGrid);
         }}
     });
