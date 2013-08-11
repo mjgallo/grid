@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from registration import signals
 import json
+from django.contrib.auth import login
 
 from django.contrib.auth.models import User
 from custom_registration.models import UserProfile
@@ -48,6 +49,7 @@ def register(request, success_url=None,
             new_group, created = GridGroup.objects.get_or_create(founder=new_user, name='My first grid')
             new_user_profile, created2 = UserProfile.objects.get_or_create(user=new_user, default_grid=new_group)
             new_user_profile.approval_queue.add(return_grid(request.REQUEST['invitation_key']))
+            new_user = authenticate(username=new_user.username)
             login(request, new_user)
             return HttpResponseRedirect('/grid/')
         else:
