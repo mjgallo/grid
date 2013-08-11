@@ -43,11 +43,14 @@
                                     <div class="controls">
                                         <label class="checkbox">
                                             <input type="checkbox"/> Keep me signed in
-                                            <a href="#" class="btn btn-link">Forgot my password</a>
+                                            <a href="/accounts/password/reset/" class="btn btn-link">Forgot my password</a>
+
                                         </label>
                                         <button type="submit" class="btn btn-success" >Sign In</button>
                                         <button type="button" class="btn">Help</button>
                                     </div>
+                                    <a href="/accounts/register/">Sign up</a>
+
                                 </div> 
                                 {% if form.errors %}
                                 <div class="alert alert-error" style=>
@@ -58,7 +61,6 @@
 
                                 <input type="hidden" name="next" value="/grid/" />
                             </form> 
-                            <a href="http://thegridworks.com/accounts/register/">Sign up</a>
             </div>                           
                     </div>
                     
