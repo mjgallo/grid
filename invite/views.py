@@ -48,6 +48,7 @@ def register(request, success_url=None,
             new_group, created = GridGroup.objects.get_or_create(founder=new_user, name='My first grid')
             new_user_profile, created2 = UserProfile.objects.get_or_create(user=new_user, default_grid=new_group)
             new_user_profile.approval_queue.add(return_grid(request.REQUEST['invitation_key']))
+            login(request, new_user)
             return HttpResponseRedirect('/grid/')
         else:
             return render_to_response('invitation/invited.html', {'form': form, 'invitation_key': invitation_key, 'email':return_email(request.REQUEST['invitation_key'])})

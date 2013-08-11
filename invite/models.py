@@ -95,7 +95,7 @@ class InvitationKey(models.Model):
         return self.date_invited + expiration_date <= timezone.now()
     key_expired.boolean = True
     
-    def send_to(self, email, from_email):
+    def send_to(self, email):
         """
         Send an invitation email to ``email``.
         """
