@@ -11,7 +11,6 @@ class CustomBackend(object):
     ADMIN_PASSWORD = 'sha1$4e987$afbcf42e21bd417fb71db8c66b321e9fc33051de'
     """
     def authenticate(self, username=None):
-        print('in here!!!!!!!!!!!!')
         UserModel=get_user_model()
         try:
             user = UserModel._default_manager.get_by_natural_key(username)

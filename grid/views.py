@@ -83,7 +83,6 @@ def invite_user(request):
         group_dict = []
         for key, value in request.POST.iteritems():
             group_dict = json.loads(key)
-        print group_dict['email']
         return HttpResponse(json.dumps({'success':True}))    
 
 def remove_user(request):

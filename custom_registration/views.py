@@ -44,7 +44,6 @@ def wrongUrl(request):
 
 @receiver(user_activated, dispatch_uid='nope')
 def create(sender, user, request, **kwargs):
-    print('IN CREATION OF NEW GRIDGROUP AND PROFILE')
     new_group, created = GridGroup.objects.get_or_create(founder=user, name='My first grid')
     new_user_profile, created2 = UserProfile.objects.get_or_create(user=user, default_grid=new_group)
 
