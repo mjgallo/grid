@@ -15,6 +15,7 @@
 
   </head>
 <h1> thegridworks </h1>
+<h3> new account - invitation </h3>
 <body>
 
                     <div class="span6">
@@ -22,9 +23,14 @@
                             <form class="form-horizontal" method="post" action="/invite/register/">
                               {% csrf_token %}
                                 <div class="heading">
-                                    <h4 class="form-heading">Sign Up</h4>
+                                    <h4 class="form-heading">Step 2: Choose a username</h4>
                                 </div>
-                                <div class={% if form.email.errors %}"control-group error"{% else %}"control-group"{% endif %}>
+
+                                <div class="progress">
+
+                                    <div class="bar progress-info" style="width: 55%;"></div>
+                                </div>
+                                 <div class={% if form.email.errors %}"control-group error"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="id_email">Email</label>
                                     <div class="controls"><span class="help-inline">{{ email }}</span>
                                     </div>

@@ -65,6 +65,17 @@ class InvitationKeyManager(models.Manager):
             except self.model.DoesNotExist:
                 return None
             return invitation_key.to_email
+    
+    def return_user(self, invitation_key):
+        """
+        Get the grid from which the invitation was extended
+        """
+        if SHA1_RE.search(invitation_key):
+            try:
+                invitation_key = self.get(key=invitation_key)
+            except self.model.DoesNotExist:
+                return None
+            return invitation_key.from_user
 
 class InvitationKey(models.Model):
     key = models.CharField(_('invitation key'), max_length=40)

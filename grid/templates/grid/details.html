@@ -227,14 +227,15 @@
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Add friends to your grid</h3>
+    <h3 id="myModalLabel">Ask friends to join your grid</h3>
   </div>
   <div class="modal-body" id="modal-content">
 
-  	<form id="newfriendsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px" method="post">
-  <input type="text" id="friendsearchparams" placeholder="Look for a friend" class="input-medium search-query">
+  	<form id="newfriendsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="post">
+  <input type="text" id="friendsearchparams" placeholder="Search" class="input-medium search-query">
   <button id="submit-button3" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
+
   	    <table id="usertable" class="table table-condensed table-hover">
 
       <thead>
@@ -250,14 +251,15 @@
       </tbody>
     </table>
 
-  <form id="newfriendinvitation" class="form-search" style="margin-top:10px;margin-bottom:10px" method="post">
-  <label>Didn't find who you were looking for? Invite them to gridworks.</label>
-  <input type="text" id="invitationemail" placeholder="send away" class="input-medium search-query">
-  <button id="submit-button5" type="submit" class="btn btn-primary"><i class="icon-envelope icon-white"></i></button>
-</form>	
 
   </div>
   <div class="modal-footer">
+      <form id="newfriendinvitation" class="form-search" style="margin-top:10px;margin-bottom:10px;display:inline-block;padding-right:50px" method="post">
+  <label>Tell someone about gridworks:</label>
+  <input type="text" id="invitationemail" placeholder="Enter email" class="input-medium search-query">
+  <button id="submit-button5" type="submit" class="btn btn-primary"><i class="icon-envelope icon-white"></i></button>
+</form> 
+
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
@@ -310,9 +312,9 @@
 <form action="/grid/create_grid/" method="POST">
   <fieldset>
     <label>Grid name</label>
-    <input type="text" name="name" placeholder="Type something…">
+    <input type="text" name="name" placeholder="">
     <label>Description</label>
-    <textarea rows=3 name="description" placeholder="Tell your friends the theme"></textarea>
+    <textarea rows=3 name="description" placeholder=""></textarea>
 
     <label class="checkbox">
       <input type="checkbox" name="private" checked value="True"> Prevent grid from showing up in other searches

@@ -21,6 +21,7 @@ from invite.forms import InvitationKeyForm
 is_key_valid = InvitationKey.objects.is_key_valid
 return_grid = InvitationKey.objects.return_grid
 return_email = InvitationKey.objects.return_email
+return_user = InvitationKey.objects.return_user
 
 
 # displays registration form
@@ -47,10 +48,11 @@ def register(request, success_url=None,
             new_user = User.objects.create_user(username=cd['username'], email=cd['email'], password=cd['password1'])
             new_group, created = GridGroup.objects.get_or_create(founder=new_user, name='My first grid')
             new_user_profile, created2 = UserProfile.objects.get_or_create(user=new_user, default_grid=new_group)
-            new_user_profile.approval_queue.add(return_grid(request.REQUEST['invitation_key']))
+            invited_grid = GridGroup.objects.get(pk=return_grid(request.REQUEST['invitation_key']))
+            new_user_profile.approval_queue.add(invited_grid.pk)
             new_user = authenticate(username=new_user.username)
             login(request, new_user)
-            return HttpResponseRedirect('/grid/')
+            return render_to_response('invitation/success.html', {'user': return_user(request.REQUEST['invitation_key']), 'grid':invited_grid.name})
         else:
             return render_to_response('invitation/invited.html', {'form': form, 'invitation_key': request.REQUEST['invitation_key'], 'email':return_email(request.REQUEST['invitation_key'])})
     else:

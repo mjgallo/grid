@@ -15,6 +15,7 @@
 
   </head>
 <h1> thegridworks </h1>
+<h3> new account </h3>
 <body>
 
                     <div class="span6">
@@ -22,8 +23,14 @@
                             <form class="form-horizontal" method="post">
                               {% csrf_token %}
                                 <div class="heading">
-                                    <h4 class="form-heading">Sign Up</h4>
+                                    <h4 class="form-heading">Step 1: Registration</h4>
                                 </div>
+
+                        <div class="progress">
+
+                          <div class="bar progress-info" style="width: 10%;"></div>
+                </div>
+
                                 <div class={% if form.email.errors %}"control-group error"{% else %}"control-group"{% endif %}>
                                     <label class="control-label" for="id_email">Email</label>
                                     <div class="controls">
@@ -64,5 +71,9 @@
                             </form> 
             </div>                            
                     </div>
+
+<div class="span6">
+</div>
+
 </body>
 </html>
