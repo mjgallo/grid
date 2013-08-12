@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django_tables2 import RequestConfig
 from grid.tables import RestaurantTable
 from postcodes.models import Postcode
+from django.core.mail import send_mail
 from custom_registration.models import UserProfile
 import string
 import json
@@ -99,6 +100,21 @@ def remove_user(request):
         return HttpResponse(json.dumps({'success':True}))
     return HttpResponse(json.dumps({'success':False}))
 
+def remove_restaurant(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                rest_dict = json.loads(key)
+            gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
+            gridgroup.restaurantsTracked.remove(rest_dict['removed_id'])
+            gridgroup.save()
+        else:
+            print 'no POST'
+        return HttpResponse(json.dumps({'success':True}))
+    return HttpResponse(json.dumps({'success':False}))
+
+
 def add_friend(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
@@ -180,6 +196,19 @@ def sort(request):
     else:
         return HttpResponseRedirect('/login/')
 
+def rest_manual_add(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            rest_dict = None
+            for key, value in request.POST.iteritems():
+                rest_dict = json.loads(key)
+            grid = GridGroup.objects.get(pk=int(rest_dict['grid']))
+            new_rest = Restaurant(name=rest_dict['name'])
+            new_rest.save()
+            grid.restaurantsTracked.add(new_rest.pk)
+            new_rest.users_interested.add(request.user.pk)
+            return HttpResponse(json.dumps({'success':True}))
+
 def newRestaurant(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
@@ -187,6 +216,7 @@ def newRestaurant(request):
             rest_dict = None
             website = None
             phone = None
+            price = None
             for key, value in request.POST.iteritems():
                 print('the key is %s' % key)
                 rest_dict = json.loads(key)
@@ -200,6 +230,10 @@ def newRestaurant(request):
                 website = rest_dict['website']
             except KeyError:
                 print('website not available')
+            try:
+                price = int(rest_dict['price'])
+            except KeyError:
+                print('price not available')
             post_code = rest_dict['postcode']
             post_obj = None
             try:
@@ -215,7 +249,7 @@ def newRestaurant(request):
             try: #see if restaurant is already in database for some reason
                 rest_obj = Restaurant.objects.get(name=rest_name, address=address, post_code=post_obj)
             except (KeyError, Restaurant.DoesNotExist):
-                rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj, telephone=phone, website=website)
+                rest_obj = Restaurant(name=rest_name, address=address, post_code=post_obj, telephone=phone, website=website, price=price)
                 rest_obj.save()
             rest_obj.users_interested.add(request.user.pk)
             grid = GridGroup.objects.get(pk=int(rest_dict['group']))

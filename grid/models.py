@@ -6,12 +6,14 @@ from postcodes.models import Postcode
 # Create your models here.
 
 class Restaurant(geomodels.Model):
+	PRICES = [(i, i) for i in range(5)]
 	name = geomodels.CharField(max_length=150)
 	address = geomodels.CharField(max_length=100)
-	post_code = geomodels.ForeignKey(Postcode)
+	post_code = geomodels.ForeignKey(Postcode, null=True)
 	users_interested = models.ManyToManyField(User)
 	telephone = models.CharField(max_length=20, null=True, blank=True)
 	website = models.URLField(null=True, blank=True)
+	price = models.IntegerField(null=True, blank=True, choices=PRICES)
 
 	objects = geomodels.GeoManager()
 

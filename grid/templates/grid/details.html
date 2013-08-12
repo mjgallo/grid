@@ -41,9 +41,9 @@
 <div style="height:10px"></div>
 <div style="height:50px">
 
-<div class="dropdown" style="display:inline-block; padding:15px">
+<div class="dropdown" style="display:inline-block; padding:15px;cursor:hand;cursor:pointer">
   <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
-    Approve invitations to join ({{ approval_queue|length}})
+    Confirm invitations ({{ approval_queue|length}})
     <b class="caret"></b>
   </a>
 
@@ -86,7 +86,7 @@
 </form>	
 
 {% if this_user.username == group.founder %}
-<div class="dropdown" style="display:inline-block">
+<div class="dropdown" style="display:inline-block;cursor:hand;cursor:pointer">
   <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
     ({{ group.request_queue|length}}) friends have asked to join this group
     <b class="caret"></b>
@@ -115,7 +115,7 @@
 			{% for user in group.users %}
 			<th style="width:140px;max-width:140px">
 				<p style="display:inline-block;text-align:left">{{ user.username }}</p>
-				<!--{% if user != this_user %}
+				<!--{% if user == this_user %}
 				<button type="button" id={{ user.pk }} class="close remove-user" data-dismiss="modal" aria-hidden="true" >×</button>
 				{% endif %} -->
 			</th>
@@ -143,10 +143,15 @@
 					{% if restaurant.0.restaurant.telephone %}
 					<p>{{ restaurant.0.restaurant.telephone }}</p>
 					{% endif %}
+          {% if restaurant.0.restaurant.price %}
+          <p>{{ restaurant.0.restaurant.price|dollarize }}</p>
+          {% endif %}
 					{% if restaurant.0.restaurant.website %}
 					<a href={{ restaurant.0.restaurant.website }} target='_blank'>Website</a>
 					{% endif %}
-
+        {% if this_user.username == group.founder %}
+        <button type="button" id={{ restaurant.0.restaurant.id }} class="close remove-restaurant" data-dismiss="modal" aria-hidden="true" >×</button>
+        {% endif %}
 			</td>
 			{% for user_review in restaurant %}
 			<td class="reviewbox">
@@ -195,13 +200,22 @@
 		<td id="searchbox" colspan=2 style="width:280px;max-width:280px">
 
 {% with group_string=group.id|stringformat:"s" %}
-<form id="newrestsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
-  <input type="text" id={{ "new-rest-search-params"|add:group_string }} placeholder="Add a restaurant" class="input-medium search-query">
-  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+<div id="newrestsearch" class="form-search" style="margin-top:10px;margin-bottom:10px">
+<form >
+  <input type="text" id={{ "new-rest-search-params"|add:group_string }} placeholder="Search for restaurant" class="input-medium search-query">
+  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
 </form>	
+<div>
+<div style="margin-bottom:10px;margin-top:0px" align="right">
+<form id="newrestmanualadd" class="form-search" style="display:none" >
+  <input type="text" id={{ "new-rest-manual"|add:group_string }} placeholder="Add name manually" class="input-medium search-query">
+  <button id="submit-button-manual" type="submit" class="btn btn-info"><i class="icon-ok-sign icon-white"></i></button>
+</form> 
+</div>
+<div class="editableform-loading" style="display:none"></div>
 <div id={{ "searchresults"|add:group_string }} style="display:none"></div>
+</td>
 
-		</td>
 		<td 
 		{% if this_user.username == group.founder %}
 		colspan={{ group.users|length }} 

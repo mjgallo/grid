@@ -49,7 +49,7 @@ def register(request, success_url=None,
             new_group, created = GridGroup.objects.get_or_create(founder=new_user, name='My first grid')
             new_user_profile, created2 = UserProfile.objects.get_or_create(user=new_user, default_grid=new_group)
             invited_grid = GridGroup.objects.get(pk=return_grid(request.REQUEST['invitation_key']))
-            new_user_profile.approval_queue.add(invited_grid.pk)
+            invited_grid.members.add(new_user.pk)
             new_user = authenticate(username=new_user.username)
             login(request, new_user)
             return render_to_response('invitation/success.html', {'user': return_user(request.REQUEST['invitation_key']), 'grid':invited_grid.name})

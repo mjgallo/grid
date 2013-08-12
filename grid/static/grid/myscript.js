@@ -33,14 +33,14 @@ $(document).ready(function() {
     
     $('a.showmap').on('click', function(e) {e.preventDefault(); return true;});
 
-    $('.remove-user').click(function(){
+    $('.remove-restaurant').click(function(){
         var current_grid = $(this).closest('table').attr('id');
-        var user_id = $(this).attr('id');
+        var restaurant_id = $(this).attr('id');
         var request = $.ajax({
           type: "POST",
-          url: "/grid/remove_user/",
+          url: "/grid/remove_restaurant/",
           dataType:'json',
-          data: JSON.stringify({'removed_id':user_id, 'group':current_grid}),
+          data: JSON.stringify({'removed_id':restaurant_id, 'group':current_grid}),
         }).done(function(msg) {
           location.reload();
         });

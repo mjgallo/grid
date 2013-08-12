@@ -11,4 +11,8 @@ def spacify(value):
 	return_string=value.replace(" ", "+")
 	return return_string
 
+@register.filter(name='dollarize')
+def dollarize(value):
+	return '$'*(value+1)
+
 

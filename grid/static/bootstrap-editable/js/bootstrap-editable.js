@@ -373,10 +373,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         setValue: function(value, convertStr) {
             if(convertStr) {
                 this.value = this.input.str2value(value);
-                console.log('test');
             } else {
                 this.value = value;
-                console.log('else');
             }
             
             //if form is visible, update input

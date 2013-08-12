@@ -18,6 +18,7 @@
     margin:0;
     margin-top: 5px;
     padding: 0;
+  
 }
 
 .editable-buttons .editable-bad {
@@ -75,5 +76,8 @@
 }
 
 .search-query:focus + button {
-    z-index: 3;   
+    z-index: 3;  
+}
+.custom-search button:hover {
+  background-color: transparent;
 }
