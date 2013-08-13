@@ -71,8 +71,8 @@ def invite(request, success_url=None,
             # a default value using reverse() will cause circular-import
             # problems with the default URLConf for this application, which
             # imports this file.
-            return HttpResponse(json.dumps({'success':True}))
+            return HttpResponse(json.dumps({'success':True, 'email':form.cleaned_data["email"]}))
     else:
         form = form_class()
-    return HttpResponse('failure')
+    return HttpResponse(json.dumps({'success':False}))
 invite = login_required(invite)

@@ -10,8 +10,11 @@ is_key_valid = NotificationKey.objects.is_key_valid
 # Create your views here.
 @receiver(user_invited, dispatch_uid='user_invited')
 def invite(sender, to_user, grid, request, **kwargs):
-    notification = NotificationKey.objects.create_notification(to_user, grid, request.user)
-    notification.send_to(to_user.email)
+    user_profile = UserProfile.objects.get(user=to_user)
+    if not user_profile.approval_queue.filter(pk=grid.pk):
+        print('sending')
+        notification = NotificationKey.objects.create_notification(to_user, grid, request.user)
+        notification.send_to(to_user.email)
 
 def confirm(request, notification_key=None):
     if notification_key and is_key_valid(notification_key):

@@ -44,7 +44,7 @@ def request_grid(request):
                 response = json.loads(key)
             grid = GridGroup.objects.get(pk=response['id'])
             grid.request_queue.add(request.user.pk)
-        return HttpResponse(json.dumps({'success':True}))
+            return HttpResponse(json.dumps({'success':True, 'username':grid.founder.username, 'gridname':grid.name}))
 
 def approve_request(request):
     if request.user.is_authenticated():
@@ -125,14 +125,14 @@ def add_friend(request):
             new_friend = User.objects.get(pk=rest_dict['id'])
             new_friend_profile = UserProfile.objects.get(user=new_friend)
             gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
-            new_friend_profile.approval_queue.add(gridgroup)
             signals.user_invited.send(sender='add_friend',
                                         to_user=new_friend,
                                         grid=gridgroup,
                                         request=request)
-
-        return HttpResponse(json.dumps({'success':True}))
-
+            new_friend_profile.approval_queue.add(gridgroup)
+            return HttpResponse(json.dumps({'success':True, 'name':new_friend.username}))
+        else:
+            return HttpResponse(json.dumps({'success':False}))
 
 def detail(request, filter=None):
     if request.user.is_authenticated():

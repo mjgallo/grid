@@ -1,5 +1,6 @@
 {% load humanize %}
 {% load my_app_filters %}
+{% load staticfiles %}
 <!doctype html>
 <html>
 <head>
@@ -370,4 +371,5 @@
 </div>
 
 </html>
+<img id="checkmark" style="display:none" src="{% static "grid/check_mark_green.png" %}" alt="checkmark"/>
 

@@ -1,11 +1,16 @@
 var current_grid;
+var myModalClone;
+var myModalJoinClone;
 
 $(document).on('click', '#addfriend', function(){
+	$('#myModal').on('hidden', function () {
+  		$('#myModal').replaceWith(myModalClone);
+	})
+	myModalClone = $("#myModal").clone();
+
 	$('#newfriendsearch').on('click', function(e) {e.preventDefault(); return true;});
 	$('#newfriendinvitation').on('click', function(e) {e.preventDefault(); return true;});
-	
 	$('#myModal').show(0, onModalShow); /* provides a signal to add submit listener to search form */
-
 	console.log('clicked');
 		current_grid = $(this).closest('table').attr('id');
         var table = document.getElementById('tbody');
@@ -54,7 +59,6 @@ $(document).on('click', '#addfriend', function(){
 });
 
 
-
 function onModalShow(){
 	$('#submit-button3').off('click').on('click', runSearch);
 	$('#submit-button5').off('click').on('click', inviteFriend);
@@ -68,7 +72,20 @@ function inviteFriend(){
 			dataType:'json',
 			data: JSON.stringify({'grid': current_grid.toString(), 'email':$('#invitationemail').val()}),
 	}).done(function(msg) {
-		$('#myModal').modal('hide');
+/////////////////////////////////////////////////
+		if (msg['success']){
+			var modal_body = $('#myModal').children('.modal-body');
+			$(modal_body).empty();
+			var modal_footer = $('#myModal').children('.modal-footer');
+			$(modal_footer).empty();
+			var checkmark = document.getElementById('checkmark').cloneNode(true);
+			$(modal_body).attr('align', 'center');
+			$(modal_body).append(checkmark);
+			$(checkmark).css('max-width','70px');
+			$(checkmark).css('display','block');
+			var message = '<p>You successfully sent an email invitation for the gridworks to ' + msg['email'] + '. Thanks for spreading the word!</p>';
+			$(modal_body).append(message);
+	}
 	});
 }
 
@@ -122,8 +139,19 @@ function addNewFriend(id) {
 			dataType:'json',
 			data:JSON.stringify({'id':id.data, 'group': current_grid}),
 		}).done(function(msg) {
-		$('#myModal').modal('hide');
-		location.reload();
+			if (msg['success']){
+				var modal_body = $('#myModal').children('.modal-body');
+				$(modal_body).empty();
+				var modal_footer = $('#myModal').children('.modal-footer');
+				$(modal_footer).empty();
+				var checkmark = document.getElementById('checkmark').cloneNode(true);
+				$(modal_body).attr('align', 'center');
+				$(modal_body).append(checkmark);
+				$(checkmark).css('max-width','70px');
+				$(checkmark).css('display','block');
+				var message = '<p>You successfully invited ' + msg['name'] + ' to your grid. Now just wait for confirmation.</p>';
+				$(modal_body).append(message);
+	}
 });
 }
 
@@ -168,6 +196,10 @@ $(document).on('click', '.approvegrid', function() {
 });
 
 $(document).on('click', '#joingrid', function(){
+	$('#myModalJoin').on('hidden', function () {
+  		$('#myModalJoin').replaceWith(myModalJoinClone);
+	})
+	myModalJoinClone = $("#myModalJoin").clone();
 
 	$('#newgridjoin').on('click', function(e) {e.preventDefault(); return true;});
 	
@@ -231,9 +263,19 @@ function joinNewGrid(id) {
 			dataType:'json',
 			data:JSON.stringify({'id':id.data}),
 		}).done(function(msg) {
-			console.log('about to hide');
-		$('#myModalJoin').modal('hide');
-});
+			if (msg['success']){
+				var modal_body = $('#myModalJoin').children('.modal-body');
+				$(modal_body).empty();
+				var modal_footer = $('#myModalJoin').children('.modal-footer');
+				var checkmark = document.getElementById('checkmark').cloneNode(true);
+				$(modal_body).attr('align', 'center');
+				$(modal_body).append(checkmark);
+				$(checkmark).css('max-width','70px');
+				$(checkmark).css('display','block');
+				var message = '<p>You successfully request membership in ' + msg['username']+"'s grid " + msg['gridname'] + '. Now just wait for' + msg['username'] +' to confirm.</p>';
+				$(modal_body).append(message);
+			}
+		});
 }
 
 function onJoinModalShow(){
