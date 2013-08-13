@@ -11,6 +11,7 @@ from grid.tables import RestaurantTable
 from postcodes.models import Postcode
 from django.core.mail import send_mail
 from custom_registration.models import UserProfile
+from grid import signals
 import string
 import json
 from django.db.models import Q
@@ -125,6 +126,11 @@ def add_friend(request):
             new_friend_profile = UserProfile.objects.get(user=new_friend)
             gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
             new_friend_profile.approval_queue.add(gridgroup)
+            signals.user_invited.send(sender='add_friend',
+                                        to_user=new_friend,
+                                        grid=gridgroup,
+                                        request=request)
+
         return HttpResponse(json.dumps({'success':True}))
 
 

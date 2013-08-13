@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'registration',
     'crispy_forms',
     'invite',
+    'notification',
 )
 
 # A sample logging configuration. The only tangible logging

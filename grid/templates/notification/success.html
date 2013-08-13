@@ -12,22 +12,18 @@
 	thegridworks.com
 </h1>
 <h3>
-	new account - invitation
+	new grid membership - confirmation
 </h3>
 <div class="span6">
   <div class="area">
 <div class="heading">
-	<h4>Step 3: Sign up complete!</h4>
+	<h4>Confirmation complete!</h4>
 	</div>
 <div class="progress">
   <div class="bar bar-success" style="width: 100%;"></div>
 </div>
-<h4>Congratulations, you're ready for the gridworks. </h4>
-<ul>
-<li>You've been enrolled in {{ user.username }}'s grid <b>{{ grid }}</b>.</li>
-<li>We've created a grid for you to track your own restaurants and pick your own friends to join. You'll see it on the tab "My first grid" (but you can rename it).</li>
-<li><a href="/grid/">Click here to check it all out now.</a></li>
-</ul>
+<h4>Congratulations, {{ to_user.username }}, you've joined {{ from_user.username }}'s grid <b>{{ grid.name }}</b> </h4>
+<a href="/grid/">Click here to check it all out now.</a>
 
 
 </div>

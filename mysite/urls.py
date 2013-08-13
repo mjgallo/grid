@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', logout, {'next_page':'/login/'}),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^invite/', include('invite.urls', namespace='invite')),
+    url(r'^notification/', include('notification.urls', namespace='notification')),
     url(r'^.*$', reg_views.wrongUrl, name='wrongUrl'),
 
 )

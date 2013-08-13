@@ -1,0 +1,8 @@
+{{ from_email }} has invited you to join his grid {{ grid }} at the thegridworks.com. Follow the link to join.
+
+http://thegridworks.com/notification/confirm/{{ invitation_key }}/
+
+Or, click "Confirm invitations" next time you log onto thegridworks.com
+
+Thanks,
+thegridworks.com team 

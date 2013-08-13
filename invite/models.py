@@ -12,11 +12,49 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from grid.models import Restaurant, GridGroup
+from custom_registration.models import UserProfile
 
 from registration.models import SHA1_RE
 # Create your models here.
 
 class InvitationKeyManager(models.Manager):
+
+    def establish_user_profile(self, invitation_key, username, password):
+        """
+        Validate an activation key and activate the corresponding
+        ``User`` if valid.
+        
+        If the key is valid and has not expired, return the ``User``
+        after activating.
+        
+        If the key is not valid or has expired, return ``False``.
+        
+        If the key is valid but the ``User`` is already active,
+        return ``False``.
+        
+        To prevent reactivation of an account which has been
+        deactivated by site administrators, the activation key is
+        reset to the string constant ``RegistrationProfile.ACTIVATED``
+        after successful activation.
+
+        """
+        # Make sure the key we're trying conforms to the pattern of a
+        # SHA1 hash; if it doesn't, no point trying to look it up in
+        # the database.
+        if SHA1_RE.search(invitation_key):
+            try:
+                profile = self.get(key=invitation_key)
+            except self.model.DoesNotExist:
+                return False
+            new_user = User.objects.create_user(username=username, email=profile.to_email, password=password)
+            new_group, user_created = GridGroup.objects.get_or_create(founder=new_user, name='My first grid')
+            new_user_profile, profile_created = UserProfile.objects.get_or_create(user=new_user, default_grid=new_group)
+            profile.gridgroup.members.add(new_user.pk)
+            profile.key = self.model.ACTIVATED
+            profile.save()
+            return (new_user, profile.gridgroup)
+        return False
+
     def is_key_valid(self, invitation_key):
         """
         Check if an ``InvitationKey`` is valid or not, returning a boolean,
@@ -78,6 +116,7 @@ class InvitationKeyManager(models.Manager):
             return invitation_key.from_user
 
 class InvitationKey(models.Model):
+    ACTIVATED = u"ALREADY_ACTIVATED"
     key = models.CharField(_('invitation key'), max_length=40)
     date_invited = models.DateTimeField(_('date invited'), 
                                         auto_now_add=True)
@@ -126,4 +165,4 @@ class InvitationKey(models.Model):
                                      'expiration_days': settings.ACCOUNT_INVITATION_DAYS,
                                      'site': current_site })
         
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        #send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
