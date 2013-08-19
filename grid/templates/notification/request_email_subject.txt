@@ -1,1 +1,1 @@
-New thegridworks.com grid request
+{{ from_user.username }} wants to join your grid

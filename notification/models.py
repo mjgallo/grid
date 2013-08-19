@@ -48,6 +48,7 @@ class NotificationKeyManager(models.Manager):
         return self.create(from_user=from_user, key=key, gridgroup=grid, to_user=to_user)
 
 class NotificationKey(models.Model):
+    ACTIVATED = u"ALREADY_ACTIVATED"    
     key = models.CharField(_('notification key'), max_length=40)
     date_invited = models.DateTimeField(_('date invited'), 
                                         auto_now_add=True)
@@ -95,7 +96,7 @@ class NotificationKey(models.Model):
 
         subject = render_to_string(template_subject,
                                    { 'site': current_site,
-                                   'from_email':self.from_user.email })
+                                   'from_user':self.from_user })
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
         
