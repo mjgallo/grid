@@ -24,14 +24,14 @@ def confirm(request, notification_key=None):
     User clicks on link in email, accepting invitation to grid
     """
     if notification_key and is_key_valid(notification_key):
-    	notification_object = is_key_valid(notification_key)
-    	to_user = notification_object.to_user
-    	from_user = notification_object.from_user
-    	user_profile = UserProfile.objects.get(user=to_user)
-    	grid = notification_object.gridgroup
+        notification_object = is_key_valid(notification_key)
+        to_user = notification_object.to_user
+        from_user = notification_object.from_user
+        user_profile = UserProfile.objects.get(user=to_user)
+        grid = notification_object.gridgroup
         if user_profile.approval_queue.filter(invited_to=grid):
             grid.members.add(to_user.pk)
-        	user_profile.approval_queue.remove(grid.pk)
+            user_profile.approval_queue.remove(grid.pk)
             return render_to_response('notification/success.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
         else:
             return render_to_response('notification/failure.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
