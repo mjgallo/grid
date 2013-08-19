@@ -18,7 +18,7 @@
 <div style="display:inline-block;text-align:right;vertical-align:top;padding-left:80px">
   <a href="#myModalJoin" id="joingrid" style="display:inline-block;" class="addtab">Find a grid</a>
   <a style="display:inline-block;padding-left:30px;cursor:pointer" id="account">{{ this_user.username }}</a>
-  <a style="margin-right:80px;padding-left:30px;display:inline-block" href="/logout/">logout</a>
+
 </div>
 
 <div style="height:50px">
@@ -101,6 +101,8 @@
         <li><a id={{ grid.id }} tabindex="-1" class="approvegrid" href="#"><b>{{ grid.name }}</b> by <i>{{ grid.founder.username }}</i></a></li>
         {% endfor %}
         {% endif %}
+        <li class="divider"></li>
+        <li><a style="margin-right:80px;padding-left:30px;display:inline-block" href="/logout/">logout</a></li>
   </ul>
 </div>
 </div>
