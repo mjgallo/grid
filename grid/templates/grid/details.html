@@ -52,7 +52,7 @@
 {% if this_user.username == group.founder %}
 <div class="dropdown" style="display:inline-block;cursor:hand;cursor:pointer">
   <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
-    ({{ group.request_queue|length}}) friends have asked to join this group
+    ({{ group.request_queue|length}}) Join requests
     <b class="caret"></b>
   </a>
 
@@ -64,10 +64,11 @@
         <li><a id={{ user.id }} tabindex="-1" class="approvemember" href="#"><b>{{ user.username }}</b> </a></li>
         {% endfor %}
         {% endif %}
-
+      <li class="divider"></li>
+      <li><a href="#myModalGridUpdate" style="padding:30px" class="editgrid" style="display:inline-block">Rename grid</a></li>
   </ul>
 </div>
-<a href="#myModalGridUpdate" style="padding:30px" class="editgrid" style="display:inline-block">Rename grid</a>
+
 {% endif %}
 
 </div>
