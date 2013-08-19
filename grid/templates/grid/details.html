@@ -58,7 +58,7 @@
 
   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
      {% if not group.request_queue %}
-       <li><a tabindex="-1" href="#">No requests to approve</a></li>
+       <li class="disabled"><a tabindex="-1" href="#">No requests to approve</a></li>
        {% else %}
      {% for user in group.request_queue %}
         <li><a id={{ user.id }} tabindex="-1" class="approvemember" href="#"><b>{{ user.username }}</b> </a></li>
@@ -95,7 +95,7 @@
 
   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
      {% if not approval_queue %}
-       <li><a tabindex="-1" href="#">No invitations to approve</a></li>
+       <li class="disabled"><a tabindex="-1" href="#">No invitations to approve</a></li>
        {% else %}
      {% for grid in approval_queue %}
         <li><a id={{ grid.id }} tabindex="-1" class="approvegrid" href="#"><b>{{ grid.name }}</b> by <i>{{ grid.founder.username }}</i></a></li>
