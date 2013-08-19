@@ -29,7 +29,7 @@ def confirm(request, notification_key=None):
         from_user = notification_object.from_user
         user_profile = UserProfile.objects.get(user=to_user)
         grid = notification_object.gridgroup
-        if user_profile.approval_queue.filter(invited_to=grid):
+        if user_profile.approval_queue.filter(pk=grid.id):
             grid.members.add(to_user.pk)
             user_profile.approval_queue.remove(grid.pk)
             return render_to_response('notification/success.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
@@ -43,7 +43,7 @@ def request(sender, to_founder, grid, request, **kwargs):
     """
     User asks founder for permission to be in the grid
     """
-    if not grid.request_queue.filter(pending_requests=request.user):
+    if not grid.request_queue.filter(pk=request.user.pk):
         print('sending')
         notification = NotificationKey.objects.create_notification(to_founder, grid, request.user)
         notification.send_to(to_founder.email)
@@ -55,7 +55,7 @@ def accept(request, notification_key=None):
     if notification_key and is_key_valid(notification_key):
         notification_object = is_key_valid(notification_key)
         grid = notification_object.gridgroup
-        if grid.request_queue.filter(pending_requests=notification_object.from_user):
+        if grid.request_queue.filter(username=notification_object.from_user.username):
             grid.members.add(notification_object.from_user.pk)
             grid.request_queue.remove(notification_object.from_user.pk)
             return render_to_response('notification/success_request.html', {'to_user':notification_object.to_user, 'from_user': notification_object.from_user, 'grid':grid})

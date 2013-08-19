@@ -86,7 +86,7 @@ class NotificationKey(models.Model):
         template_subject, template_email = (None, None)
         # Logic to determine whether this is an invitation or a request
         # evaluates true if invitation, i.e. grid is in to_user's approval queue
-        if UserProfile.objects.get(user=self.to_user).approval_queue.filter(invited_to=self.gridgroup):
+        if UserProfile.objects.get(user=self.to_user).approval_queue.filter(pk=self.gridgroup.pk):
             template_subject, template_email = ('notification/invitation_email_subject.txt',
                                                 'notification/invitation_email.txt')
         else:
