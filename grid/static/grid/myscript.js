@@ -56,7 +56,6 @@ $(document).ready(function() {
 
     if ($.cookie("grid") != null) {
       var tab_id = "#" + $.cookie("grid") + ' a';
-      console.log('test')
       $(tab_id).tab('show');
     }
 
@@ -100,12 +99,9 @@ $(document).on('click', '#confirmDeleteButton', function(){
         body.prepend('<img width="30%" height="30%" name="img01" src="/static/grid/check_mark_green.png">');
         body.append('<br><p>You have successfully removed yourself from the grid.</p>');
         var tab_id = '#'+delete_button_clicked;
-        console.log(tab_id);
         var removedTab = $('#myTab').find(tab_id);
         var tabWasActive = ($(removedTab).attr('id') === prevTab) ? true : false;
-        console.log(removedTab);
         var removedDivID = '#grid'+delete_button_clicked;
-        console.log(removedDivID);
         var removedDiv = $(document).find(removedDivID);
         removedTab.remove();
         removedDiv.remove();
@@ -175,12 +171,10 @@ $(document).ready(function() {
 
 function updatedReviewResponse(response, newValue) {
   var obj = JSON.parse(response); // dict key is new_review
-  console.log(response.new_review);
 }
 
 function renameGridResponse(response, newValue) {
   var obj = JSON.parse(response); // dict key is new_review
-  console.log(response.new_review);
 }
 
 var getMap = function(opts) {

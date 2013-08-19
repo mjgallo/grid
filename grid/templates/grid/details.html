@@ -15,9 +15,9 @@
 <h1 style="display:inline-block">
   thegridworks.com
 </h1>
-<div style="display:inline-block;text-align:right;vertical-align:top;padding-left:80px">
+<div style="margin-top:10px;display:inline-block;text-align:right;vertical-align:top;padding-left:164px">
   <a href="#myModalJoin" id="joingrid" style="display:inline-block;" class="addtab">Find a grid</a>
-  <a style="display:inline-block;padding-left:30px;cursor:pointer" id="account">{{ this_user.username }}</a>
+  <a class="btn btn-toggle btn-inverse" style="display:inline-block;margin-left:20px" id="account">{{ this_user.username }}<span class="caret"></span></a>
 
 </div>
 
@@ -87,8 +87,8 @@
 
 <div id="confirminvitations" style="display:none">
 <form method="POST" id="account_form">First name: <input id="fn" type="text" name="firstname" placeholder={{ this_user.first_name }}><br>Last name: <input id="ln" type="text" name="lastname" placeholder={{ this_user.last_name }}><input id="account_update" class="btn" type="submit" value="Update"></form>
-<div class="dropdown" style="display:inline-block; padding:15px;cursor:hand;cursor:pointer">
-  <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+<div class="dropdown" style="cursor:hand;cursor:pointer">
+  <a align="center" class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
     Confirm invitations ({{ approval_queue|length}})
     <b class="caret"></b>
   </a>
@@ -101,9 +101,11 @@
         <li><a id={{ grid.id }} tabindex="-1" class="approvegrid" href="#"><b>{{ grid.name }}</b> by <i>{{ grid.founder.username }}</i></a></li>
         {% endfor %}
         {% endif %}
-        <li class="divider"></li>
-        <li><a style="margin-right:80px;padding-left:30px;display:inline-block" href="/logout/">logout</a></li>
+
   </ul>
 </div>
+  <div style="padding-top:12px">
+  <a href="/logout/">Logout</a>
+  </div>
 </div>
 <p id="defaultGrid" style="display:none">{{ default_group.id }}</p>
