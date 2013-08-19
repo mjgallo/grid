@@ -12,18 +12,19 @@
 	thegridworks.com
 </h1>
 <h3>
-	new grid membership - confirmation
+	new grid membership
 </h3>
 <div class="span6">
   <div class="area">
 <div class="heading">
-	<h4>Confirmation complete!</h4>
+	<h4>Something went wrong</h4>
 	</div>
 <div class="progress">
-  <div class="bar bar-success" style="width: 100%;"></div>
+  <div class="bar bar-warning" style="width: 55%;"></div>
 </div>
-<h4>Congratulations, {{ to_user.username }}, you have successfully joined {{ from_user.username }}'s grid <b>{{ grid.name }}</b> </h4>
-<a href="/grid/">Click here to check it all out.</a>
+<h4>Something wrong, and we weren't able to confirm {{ from_user.username }}'s membership in your grid <b>{{ grid.name }}</b> </h4>
+
+<p>That's okay though. Head to <a href="/grid/">thegridworks.com</a> and click on Confirm invitations to accept {{ from_user.username }}.<p>
 
 
 </div>

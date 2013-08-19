@@ -272,7 +272,7 @@ function joinNewGrid(id) {
 				$(modal_body).append(checkmark);
 				$(checkmark).css('max-width','70px');
 				$(checkmark).css('display','block');
-				var message = '<p>You successfully request membership in ' + msg['username']+"'s grid " + msg['gridname'] + '. Now just wait for' + msg['username'] +' to confirm.</p>';
+				var message = '<p>You successfully requested membership in ' + msg['username']+"'s grid " + msg['gridname'] + '. Now just wait for ' + msg['username'] +' to confirm.</p>';
 				$(modal_body).append(message);
 			}
 		});

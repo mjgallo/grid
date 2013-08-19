@@ -1,1 +1,126 @@
-table.html
+{% load humanize %}
+{% load my_app_filters %}
+
+<table id={{ group.id }} class="table table-bordered" style="table-layout:fixed"> 
+	<thead class=tablehead>
+
+		<tr style="height:15px">
+			<th style="width:140px;max-width:140px"> </th>
+			{% for user in group.users %}
+			<th style="width:140px;max-width:140px">
+				<p style="display:inline-block;text-align:left">{{ user.username }}</p>
+				<!--{% if user == this_user %}
+				<button type="button" id={{ user.pk }} class="close remove-user" data-dismiss="modal" aria-hidden="true" >×</button>
+				{% endif %} -->
+			</th>
+			{% endfor %}
+			{% if this_user.username == group.founder %}
+			<th style="width:140px;max-width:140px;text-align:center"><a href="#myModal" id="addfriend" role="button" class="btn btn">Invite a friend</a>
+			</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody>
+	{% if not group.data %}
+		<tr>
+			<td colspan={% if this_user.username == group.founder %}
+{{ group.users|length|add:"1" }}{% else %}{{ group.users|length }}{% endif %}>Search for restaurants below to start adding reviews</td>
+			<td></td>
+		</tr>
+
+	{% else %}
+	{% for restaurant in group.data %}
+		<tr class="rows">
+			<td style="width:120px">
+				<a href="#" id="tester" rel="popover" class="showmap" data-toggle="popover" data-location={{ restaurant.0.restaurant.address|spacify }},{{ restaurant.0.restaurant.post_code.name|spacify }}>
+					<b>{{ restaurant.0.restaurant.name }}<br> {{ restaurant.0.restaurant.post_code.name }}</b>{% if restaurant.0.restaurant.distance %}<br> {{ restaurant.0.restaurant.distance.km|floatformat:"1"|intcomma }}km away{% endif %}</a>
+					{% if restaurant.0.restaurant.telephone %}
+					<p>{{ restaurant.0.restaurant.telephone }}</p>
+					{% endif %}
+          {% if restaurant.0.restaurant.price %}
+          <p>{{ restaurant.0.restaurant.price|dollarize }}</p>
+          {% endif %}
+					{% if restaurant.0.restaurant.website %}
+					<a href={{ restaurant.0.restaurant.website }} target='_blank'>Website</a>
+					{% endif %}
+        {% if this_user.username == group.founder %}
+        <button type="button" id={{ restaurant.0.restaurant.id }} class="close remove-restaurant" data-dismiss="modal" aria-hidden="true" >×</button>
+        {% endif %}
+			</td>
+			{% for user_review in restaurant %}
+			<td class="reviewbox">
+				<div class="generalreviewdiv">
+					<div class={% if user_review.review and user_review.good %}
+						review_exists_good
+						{% elif user_review.review and not user_review.good %}
+						review_exists_bad
+						{% else %}
+						no_review
+						{% endif %}
+					>
+
+						<div href=# 	
+							id={{ group.id }}-{{ user_review.restaurant.id }}
+
+							data-type="textarea"
+							data-pk="1"
+							data-url="/grid/update/"
+							data-title="Write a review"
+
+						 	class={% if user_review.reviewer == this_user %}
+						 			edit
+						 			{% endif %} 
+						 			name={{ user_review.id}}
+						 	align="left"
+						>
+
+						{% if user_review.review %}{{ user_review.review }}
+						{% elif user_review.reviewer == this_user %} Add your review! 
+						{% else %}	
+						{% endif %}
+						</div>
+					</div>
+				</div>
+			</td>
+			{% endfor %}
+			{% if this_user.username == group.founder %}
+			<td class="reviewbox">
+			</td>
+			{% endif %}
+		</tr>
+	{% endfor %}
+	{% endif %}
+	<tr id="searchrow">
+		<td id="searchbox" colspan=2 style="width:280px;max-width:280px">
+
+{% with group_string=group.id|stringformat:"s" %}
+<div id="newrestsearch" class="form-search" style="margin-top:10px;margin-bottom:10px">
+<form >
+  <input type="text" id={{ "new-rest-search-params"|add:group_string }} placeholder="Search for restaurant" class="input-medium search-query">
+  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
+</form>	
+<div>
+<div style="margin-bottom:10px;margin-top:0px" align="right">
+<form id="newrestmanualadd" class="form-search" style="display:none" >
+  <input type="text" id={{ "new-rest-manual"|add:group_string }} placeholder="Add name manually" class="input-medium search-query">
+  <button id="submit-button-manual" type="submit" class="btn btn-info"><i class="icon-ok-sign icon-white"></i></button>
+</form> 
+</div>
+<div class="editableform-loading" style="display:none"></div>
+<div id={{ "searchresults"|add:group_string }} style="display:none"></div>
+</td>
+
+		<td 
+		{% if this_user.username == group.founder %}
+		colspan={{ group.users|length }} 
+		{% else %}
+		colspan={{ group.users|length|add:"-1" }}
+		{% endif %}
+		style="overflow:auto">
+			<div id={{ "map-canvas"|add:group_string }} style="display:none;height:338px;width:338px"></div>
+		</td>
+		{% endwith %}
+
+	</tr>
+	</tbody>
+</table>

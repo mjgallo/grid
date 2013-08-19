@@ -8,7 +8,3 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     default_grid = models.ForeignKey(GridGroup)
     approval_queue = models.ManyToManyField(GridGroup, related_name='invited_to')
-
-
-
-

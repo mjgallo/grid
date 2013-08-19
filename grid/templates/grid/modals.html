@@ -1,0 +1,148 @@
+{% load humanize %}
+{% load my_app_filters %}
+
+<!-- Modal User add -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Ask friends to join your grid</h3>
+  </div>
+  <div class="modal-body" id="modal-content">
+
+  	<form id="newfriendsearch" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="post">
+  <input type="text" id="friendsearchparams" placeholder="Search" class="input-medium search-query">
+  <button id="submit-button3" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+</form>	
+
+  	    <table id="usertable" class="table table-condensed table-hover">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Username</th>
+          <th style="width: 36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody" style="cursor:pointer">
+      </tbody>
+    </table>
+
+
+  </div>
+  <div class="modal-footer">
+      <form id="newfriendinvitation" class="form-search" style="margin-top:10px;margin-bottom:10px;display:inline-block;padding-right:50px" method="post">
+  <label>Tell someone about gridworks:</label>
+  <input type="text" id="invitationemail" placeholder="Enter email" class="input-medium search-query">
+  <button id="submit-button5" type="submit" class="btn btn-primary"><i class="icon-envelope icon-white"></i></button>
+</form> 
+
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+<!-- ********** Modal join grid ******** -->
+<div id="myModalJoin" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Look for a new grid to join</h3>
+  </div>
+  <div class="modal-body" id="modal-content">
+
+  	<form id="newgridjoin" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px">
+  <input type="text" id="gridjoinparams" placeholder="Search" class="input-medium search-query">
+  <button id="submit-button4" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+</form>	
+  	    <table id="joingridtable" class="table table-condensed table-hover">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Founder</th>
+          <th>Grid name</th>
+          <th>Description</th>
+          <th>Members</th>
+          <th>Restaurants</th>
+          <th>Reviews</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyjoin" style="cursor:pointer">
+      </tbody>
+    </table>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+
+<!-- Modal New Grid -->
+<div id="myModalGrid" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Create a new grid</h3>
+  </div>
+
+<div class="modal-body" id="modal-content">
+
+<form action="/grid/create_grid/" method="POST">
+  <fieldset>
+    <label>Grid name</label>
+    <input type="text" name="name" placeholder="">
+    <label>Description</label>
+    <textarea rows=3 name="description" placeholder=""></textarea>
+
+    <label class="checkbox">
+      <input type="checkbox" name="private" checked value="True"> Prevent grid from showing up in other searches
+    </label>
+    <button type="submit" class="btn">Submit</button>
+  </fieldset>
+</form>
+
+</div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+ </div>
+</div>
+
+<!-- Modal Update Grid -->
+<div id="myModalGridUpdate" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Update the grid</h3>
+  </div>
+
+<div class="modal-body" id="modal-content">
+
+<form id="updategrid">
+  <fieldset>
+    <label>New name</label>
+    <input id="newgridname" type="text" name="nameupdate" placeholder="Type something…">
+    <label>New Description</label>
+    <textarea id="newgriddescription" rows=3 name="descriptionupdate" placeholder="Tell your friends the theme"></textarea>
+
+    <button id="updategridbutton" type="submit" class="btn">Submit</button>
+  </fieldset>
+</form>
+
+</div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+ </div>
+</div>
+
+<!-- Modal Confirm Grid Remove -->
+<div id="modalGridRemove" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Grid removal</h3>
+  </div>
+
+<div class="modal-body" id="modal-content">
+    <button id="confirmDeleteButton" class="btn btn-warning">Confirm</button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+
+</div>
+</div>

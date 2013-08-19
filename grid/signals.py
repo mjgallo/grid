@@ -5,4 +5,4 @@ from django.dispatch import Signal
 user_invited = Signal(providing_args=["to_user", "grid", "request"])
 
 # A user has requested that a founder let him join his grid
-user_requested = Signal(providing_args=["to_founder", "grid", "request"])
+grid_requested = Signal(providing_args=["to_founder", "grid", "request"])

@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
+from custom_registration.models import UserProfile
 
 # Create your models here.
 from grid.models import Restaurant, GridGroup
@@ -80,15 +81,25 @@ class NotificationKey(models.Model):
         Send an invitation email to ``email``.
         """
         print self.key
+
         current_site = Site.objects.get_current()
-        
-        subject = render_to_string('notification/notification_email_subject.txt',
+        template_subject, template_email = (None, None)
+        # Logic to determine whether this is an invitation or a request
+        # evaluates true if invitation, i.e. grid is in to_user's approval queue
+        if UserProfile.objects.get(user=self.to_user).approval_queue.filter(invited_to=self.gridgroup):
+            template_subject, template_email = ('notification/invitation_email_subject.txt',
+                                                'notification/invitation_email.txt')
+        else:
+            template_subject, template_email = ('notification/request_email_subject.txt',
+                                                'notification/request_email.txt')
+
+        subject = render_to_string(template_subject,
                                    { 'site': current_site,
                                    'from_email':self.from_user.email })
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
         
-        message = render_to_string('notification/notification_email.txt',
+        message = render_to_string(template_email,
                                    { 'from_email': self.from_user.email,
                                    'grid': self.gridgroup.name,
                                    'notification_key': self.key,

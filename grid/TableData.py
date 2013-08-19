@@ -19,6 +19,9 @@ class TableData:
         return list(chain(group.members.all(), [group.founder]))
 
     def setAllRestaurants(self, group, filter):
+        """
+        Collects list of all restaurants in grid and in any order specified
+        """
         rest_dict = group.restaurantsTracked
         self.all_restaurants = rest_dict.all().distinct() #could perhaps do distinct here instead of above
         if filter != None:
@@ -46,6 +49,10 @@ class TableData:
 
     # returns two dimensional array of review objects
     def organizeSet(self, founder, filter):
+        """
+        Main function. Organizes data and returns dictionary, ordered if
+        necessary
+        """
         print ('this is how i organize %s' % filter)
         group_list = []
         groups = GridGroup.objects.filter(Q(founder=founder)|Q(members=founder)).distinct()

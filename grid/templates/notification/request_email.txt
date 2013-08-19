@@ -1,0 +1,8 @@
+{{ from_email }} has requested to join your grid {{ grid }}. Follow the link to approve.
+
+http://thegridworks.com/notification/accept/{{ notification_key }}/
+
+Or, click "Approve requests to join" next time you log onto thegridworks.com
+
+Thanks,
+thegridworks.com team 

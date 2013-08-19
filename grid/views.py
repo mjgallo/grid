@@ -18,6 +18,10 @@ from django.db.models import Q
 
 
 def find_grid(request):
+    """
+    A user searches for potential grids to join. Handles both search
+    terms and non search term requests.
+    """
     if request.user.is_authenticated():
         group_list=[]
         group_queryset=None
@@ -37,16 +41,49 @@ def find_grid(request):
         return HttpResponse(json.dumps(list(group_list)))
 
 def request_grid(request):
+    """
+    A user requests that a founder allow him in the founder's grid. If founder
+    has already invited user to grid, user is added automatically. Otherwise,
+    user is placed into approval_queue and an email is sent to founder.
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             response = None
             for key, value in request.POST.iteritems():
                 response = json.loads(key)
             grid = GridGroup.objects.get(pk=response['id'])
-            grid.request_queue.add(request.user.pk)
+            if not UserProfile.objects.get(user=request.user).approval_queue.filter(invited_to=grid):
+                signals.grid_requested.send(sender='request_grid',
+                                            to_founder=grid.founder,
+                                            grid=grid,
+                                            request=request)
+                grid.request_queue.add(request.user.pk)
+            else: 
+                UserProfile.objects.get(user=request.user).approval_queue.remove(grid.pk)
+                grid.members.add(request.user.pk)
             return HttpResponse(json.dumps({'success':True, 'username':grid.founder.username, 'gridname':grid.name}))
 
+def remove_grid(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            print request
+            posted = json.loads(request.body)
+            print posted
+            grid = GridGroup.objects.get(pk=int(posted['grid']))
+            if grid.founder==request.user:
+                if grid==UserProfile.objects.get(user=request.user).default_grid:
+                    return HttpResponse(json.dumps({'success':False, 'msg':'cannot delete first grid'}))
+                else:
+                    grid.delete()
+            else:
+                grid.members.remove(request.user.pk)
+    return HttpResponse(json.dumps({'success':True}))
+
+
 def approve_request(request):
+    """
+    A founder approves a user's request to join a grid
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             rest_dict = None
@@ -59,6 +96,12 @@ def approve_request(request):
             return HttpResponse(json.dumps({'success':True}))
 
 def find_users(request):
+    """
+    The view called when a grid founder searches for more users to add
+    to his grid. Called in both cases: when a search string is supplied
+    to narrow the table down -- or when no search is provided and all 
+    users not currently in the grid or invited to the grid are displayed
+    """
     if request.user.is_authenticated():
         display_users = None
         group_dict = []
@@ -82,6 +125,10 @@ def find_users(request):
         return HttpResponse(json.dumps(list(display_users)))
 
 def invite_user(request):
+    """
+    Out of service
+    """
+
     if request.user.is_authenticated():
         group_dict = []
         for key, value in request.POST.iteritems():
@@ -89,6 +136,9 @@ def invite_user(request):
         return HttpResponse(json.dumps({'success':True}))    
 
 def remove_user(request):
+    """
+    Out of service
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             rest_dict = None
@@ -102,6 +152,12 @@ def remove_user(request):
     return HttpResponse(json.dumps({'success':False}))
 
 def remove_restaurant(request):
+    """
+    Founder of grid clicks on x in grid and the restaurant is removed from
+    the restuarantsTracked field. The associated reviews are NOT deleted. If
+    the restaurant is re-added all associated reviews are 
+    automatically reinstituted
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             rest_dict = None
@@ -117,6 +173,13 @@ def remove_restaurant(request):
 
 
 def add_friend(request):
+    """
+    A founder of a grid requests that another user join the grid. If 
+    the requested user has himself already requested access to the grid,
+    then the user is added automatically.
+    Otherwise, the grid is placed in the invited user's approval_queue
+    and an email notification is sent.
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             rest_dict = None
@@ -125,16 +188,24 @@ def add_friend(request):
             new_friend = User.objects.get(pk=rest_dict['id'])
             new_friend_profile = UserProfile.objects.get(user=new_friend)
             gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
-            signals.user_invited.send(sender='add_friend',
-                                        to_user=new_friend,
-                                        grid=gridgroup,
-                                        request=request)
-            new_friend_profile.approval_queue.add(gridgroup)
+            if not gridgroup.request_queue.filter(user=new_friend):
+                signals.user_invited.send(sender='add_friend',
+                                            to_user=new_friend,
+                                            grid=gridgroup,
+                                            request=request)
+                new_friend_profile.approval_queue.add(gridgroup)
+            else:
+                gridgroup.members.add(new_friend.pk)
+                gridgroup.request_queue.remove(new_friend.pk)
             return HttpResponse(json.dumps({'success':True, 'name':new_friend.username}))
         else:
             return HttpResponse(json.dumps({'success':False}))
 
 def detail(request, filter=None):
+    """
+    The main view that handles the organizing and loading of the 
+    user's grid data into the details template. 
+    """
     if request.user.is_authenticated():
         user_profile = UserProfile.objects.get(user=request.user)
         group = user_profile.default_grid
@@ -160,6 +231,9 @@ def detail(request, filter=None):
 
 
 def update(request):
+    """
+    User creates or edits a review
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             this_review = None
@@ -288,6 +362,10 @@ def updategrid(request):
             return HttpResponse(json.dumps({'success':True}))
 
 def approvegrid(request):
+    """
+    A user consents to a founder's invitation to be included in the founder's
+    grid
+    """
     if request.user.is_authenticated():
         if request.method == 'POST':
             request_dict = []
@@ -300,5 +378,21 @@ def approvegrid(request):
             return HttpResponse(json.dumps({'success':True}))
     else:
         return HttpResponseRedirect('/login/')            
+
+def update_account(request):
+    if request.user.is_authenticated():
+        print 'user authenticated'
+        if request.method == 'POST':
+            try:
+                request.user.first_name = request.POST['firstname']
+            except KeyError:
+                print 'no first name'
+            try:
+                request.user.last_name = request.POST['lastname']
+            except KeyError:
+                print 'no last name'
+            request.user.save()
+            return HttpResponse(json.dumps({'success':True, 'firstname':request.user.first_name, 'lastname':request.user.last_name}))
+    return HttpResponse(json.dumps({'success':False}))
 
 
