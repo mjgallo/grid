@@ -52,7 +52,7 @@ def request_grid(request):
             for key, value in request.POST.iteritems():
                 response = json.loads(key)
             grid = GridGroup.objects.get(pk=response['id'])
-            if not UserProfile.objects.get(user=request.user).approval_queue.filter(invited_to=grid):
+            if not UserProfile.objects.get(user=request.user).approval_queue.filter(pk=grid.pk):
                 signals.grid_requested.send(sender='request_grid',
                                             to_founder=grid.founder,
                                             grid=grid,
@@ -186,7 +186,7 @@ def add_friend(request):
             new_friend = User.objects.get(pk=rest_dict['id'])
             new_friend_profile = UserProfile.objects.get(user=new_friend)
             gridgroup = GridGroup.objects.get(pk=int(rest_dict['group']))
-            if not gridgroup.request_queue.filter(user=new_friend):
+            if not gridgroup.request_queue.filter(pk=new_friend.pk):
                 signals.user_invited.send(sender='add_friend',
                                             to_user=new_friend,
                                             grid=gridgroup,
