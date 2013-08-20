@@ -66,9 +66,7 @@ def request_grid(request):
 def remove_grid(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            print request
             posted = json.loads(request.body)
-            print posted
             grid = GridGroup.objects.get(pk=int(posted['grid']))
             if grid.founder==request.user:
                 if grid==UserProfile.objects.get(user=request.user).default_grid:
@@ -201,28 +199,42 @@ def add_friend(request):
         else:
             return HttpResponse(json.dumps({'success':False}))
 
-def detail(request, filter=None):
+def detail(request):
     """
     The main view that handles the organizing and loading of the 
     user's grid data into the details template. 
     """
     if request.user.is_authenticated():
+        postcode = searches = sort = None
+        request_dict = {'filtername':'', 'searchgridparams':''}
+        if request.GET:
+            request_dict = request.GET.dict()
         user_profile = UserProfile.objects.get(user=request.user)
         group = user_profile.default_grid
         groups = GridGroup.objects.filter(Q(founder=request.user)|Q(members=request.user))
-        reviewers = group.members.order_by('username')
-        table = TableData(request.user, filter)
+        table = TableData(request.user, sort=request_dict['filtername'], searchstring=request_dict['searchgridparams'])
         table_data = table.getTableData()
-        #all_users = table.getMyUsers(group)
-        all_restaurants = table.getRestaurantSequence()
+        if len(request_dict['filtername']) > 0: # test to see if page submitted a value here
+            if not table.postcode_found:
+                message = "Could not find postal code " + request_dict['filtername'].upper()
+                postcode = None
+                sort = {'message':message, 'postcode':postcode}
+            else:
+                message = "Sorting on " + request_dict['filtername'].upper()
+                postcode = request_dict['filtername'].upper().replace(' ', '_')
+                sort = {'message':message, 'postcode':postcode}
+        if len(request_dict['searchgridparams']) > 0: # test to see if page submitted a value here
+            message = "Filtering on '" + request_dict['searchgridparams']+"'"
+            terms = request_dict['searchgridparams']
+            searches = {'message':message, 'terms':terms}
         template = loader.get_template('grid/details.html')
         context = RequestContext(request, {
             'default_group': group,
+            'sort': sort,
+            'searches': searches,
             'groups': groups,
-            #'all_users': all_users,
             'approval_queue': user_profile.approval_queue.all(),
             'table_data':table_data,
-            'all_restaurants': all_restaurants,
             'this_user': request.user
             })
         return HttpResponse(template.render(context))

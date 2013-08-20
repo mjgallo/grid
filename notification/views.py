@@ -5,7 +5,7 @@ from grid.signals import user_invited, grid_requested
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-
+cancelKey = NotificationKey.objects.cancelKey
 is_key_valid = NotificationKey.objects.is_key_valid
 # Create your views here.
 @receiver(user_invited, dispatch_uid='user_invited')
@@ -32,12 +32,12 @@ def confirm(request, notification_key=None):
         if user_profile.approval_queue.filter(pk=grid.id):
             grid.members.add(to_user.pk)
             user_profile.approval_queue.remove(grid.pk)
-            notification_object.key = NotificationKey.model.ACTIVATED
+            cancelKey(notification_object)
             return render_to_response('notification/success.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
         else:
-            return render_to_response('notification/failure.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
+            return render_to_response('notification/failure.html', {'to_user':'test'})
     else:
-        return render_to_response('notification/failure.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
+        return render_to_response('notification/failure.html', {'to_user':'test'})
 
 @receiver(grid_requested, dispatch_uid='user_invited')
 def request(sender, to_founder, grid, request, **kwargs):
@@ -59,7 +59,7 @@ def accept(request, notification_key=None):
         if grid.request_queue.filter(username=notification_object.from_user.username):
             grid.members.add(notification_object.from_user.pk)
             grid.request_queue.remove(notification_object.from_user.pk)
-            notification_object.key = NotificationKey.model.ACTIVATED
+            cancelKey(notification_object)
             return render_to_response('notification/success_request.html', {'to_user':notification_object.to_user, 'from_user': notification_object.from_user, 'grid':grid})
         else:
             return render_to_response('notification/failure_request.html', {'to_user':'test'})

@@ -9,8 +9,9 @@ from itertools import chain
 class TableData:
     'Class that takes in queryset and returns altered object list for use in table'
 
-    def __init__(self, founder, filter):
-        self.TableSet = self.organizeSet(founder, filter)
+    def __init__(self, founder, sort=None, searchstring=None):
+        self.postcode_found = False
+        self.TableSet = self.organizeSet(founder, sort, searchstring)
 
     def getTableData(self):
         return self.TableSet
@@ -18,46 +19,66 @@ class TableData:
     def getMyUsers(self, group):
         return list(chain(group.members.all(), [group.founder]))
 
-    def setAllRestaurants(self, group, filter):
+    def setAllRestaurants(self, group):
         """
         Collects list of all restaurants in grid and in any order specified
         """
         rest_dict = group.restaurantsTracked
         self.all_restaurants = rest_dict.all().distinct() #could perhaps do distinct here instead of above
-        if filter != None:
-            uppercase = filter.upper()
-            postcode_obj = None
-            try:
-                remove_underscore = uppercase.replace("_", " ")
-                postcode_obj = Postcode.objects.get(name=remove_underscore)
-                self.all_restaurants = self.all_restaurants.distance(
-                                    postcode_obj.location, field_name='post_code__location').order_by('distance')
-            except ObjectDoesNotExist:
-                remove_space = uppercase.replace("_", "")
-                try:
-                    postcode_obj = Postcode.objects.get(name=remove_space)
-                    self.all_restaurants = self.all_restaurants.distance(
-                                    postcode_obj.location, field_name='post_code__location').order_by('distance')
-                except ObjectDoesNotExist:
-                    print 'bad filter'
 
-    def getRestaurantSequence(self):
-        self.rest_list = []
-        for rest in self.all_restaurants:
-            self.rest_list.append(rest.name)
-        return self.rest_list
+
+    def sortAllRestaurants(self, sort):
+        uppercase = sort.upper()
+        postcode_obj = None
+        try:
+            remove_underscore = uppercase.replace("_", " ")
+            postcode_obj = Postcode.objects.get(name=remove_underscore)
+            self.all_restaurants = self.all_restaurants.distance(
+                                postcode_obj.location, field_name='post_code__location').order_by('distance')
+            self.postcode_found = True
+        except ObjectDoesNotExist:
+            remove_space = uppercase.replace("_", "")
+            try:
+                postcode_obj = Postcode.objects.get(name=remove_space)
+                self.all_restaurants = self.all_restaurants.distance(
+                                postcode_obj.location, field_name='post_code__location').order_by('distance')
+                self.postcode_found = True
+            except ObjectDoesNotExist:
+                print 'bad filter'
+
+    def filterSearch(self, group, searchstring):
+        # tokenize search string
+        searchstrings = searchstring.split()
+        relevant_rests = []
+        for search in searchstrings:
+            relevant_reviews = Review.objects.filter(gridgroup=group, review__icontains=search)
+            restaurants = Restaurant.objects.filter(name__icontains=search)
+            for review in relevant_reviews:
+                if review.restaurant not in relevant_rests:
+                    relevant_rests.append(review.restaurant.pk)
+            for restaurant in restaurants:
+                if restaurant not in relevant_rests:
+                    relevant_rests.append(restaurant.pk)
+        self.all_restaurants = Restaurant.objects.filter(pk__in=relevant_rests)
 
     # returns two dimensional array of review objects
-    def organizeSet(self, founder, filter):
+    def organizeSet(self, founder, sort, searchstring):
         """
         Main function. Organizes data and returns dictionary, ordered if
         necessary
         """
-        print ('this is how i organize %s' % filter)
+        print ('this is how i organize %s' % sort)
         group_list = []
         groups = GridGroup.objects.filter(Q(founder=founder)|Q(members=founder)).distinct()
         for group in groups.all():
-            self.setAllRestaurants(group, filter)
+            # get all restaurants in group
+            self.setAllRestaurants(group)
+            # pare down results to relevant
+            if searchstring:
+                self.filterSearch(group, searchstring)
+            # sort all restaurants in group
+            if sort:
+                self.sortAllRestaurants(sort)
             table_list = []
             user_list = self.getMyUsers(group)
             for restaurant in self.all_restaurants:
@@ -73,7 +94,3 @@ class TableData:
             link_id = "#" + element_id
             group_list.append({'request_queue':group.request_queue.all(), 'founder': group.founder.username, 'name':group.name, 'id':group.id, 'data':table_list, 'users':user_list, 'element_id':element_id, 'link_id':link_id})
         return group_list
-
-    def isPostcode(self, filter):
-        if len(filter)==8 or len(filter)==7 or len(filter)==6:
-            return True

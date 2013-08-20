@@ -22,7 +22,7 @@ urlpatterns = patterns('',
 	url(r'^approve_request/$', views.approve_request, name='approve_request'),
 	url(r'^invite_user/$', views.invite_user, name='invite_user'),
 	url(r'^update_account/$', views.update_account, name='update_account'),
-	url(r'^(?P<filter>\w+)/$', views.detail, name='detail'),
+	#url(r'^(?P<filter>\w+)/$', views.detail, name='detail'),
     url(r'^.*/$', reg_views.wrongUrl, name='wrongUrl'),
 )
 

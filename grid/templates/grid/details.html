@@ -12,10 +12,10 @@
 
 <!-- ACTUAL HTML-->
 </head>
-<h1 style="display:inline-block">
+<h1 style="display:inline-block; margin-top:30px">
   thegridworks.com
 </h1>
-<div style="margin-top:10px;display:inline-block;text-align:right;vertical-align:top;padding-left:164px">
+<div style="margin-top:10px;display:inline-block;text-align:right;vertical-align:top;position:fixed;right:20px">
   <a href="#myModalJoin" id="joingrid" style="display:inline-block;" class="addtab">Find a grid</a>
   <a class="btn btn-toggle btn-inverse" style="display:inline-block;margin-left:20px" id="account">{{ this_user.username }}<span class="caret"></span></a>
 
@@ -44,8 +44,10 @@
 {% for group in table_data %}
 <div {% if group.id == default_group.id %}class="tab-pane active"{% else %}class="tab-pane"{% endif %} id={{ group.element_id }} style="margin-left:60px; margin-right:60px; margin-bottom:60px">
 <div class="overarchingdiv" id={{ group.id }}>
-<form id="newfilter" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="post" autocomplete="off" action="/grid/sort/">
-  <input type="text" id="new-filter-search-params" placeholder="Filter by postcode" class="input-medium search-query" name="filtername">
+<form id="newfilter" class="form-search custom-search" style="margin-top:10px;margin-bottom:10px;display:inline-block" method="get" autocomplete="off" action="/grid/">
+  <input type="text" id="new-grid-search-params" placeholder="Search grid" {% if searches.terms %}value={{ searches.terms }}{% endif %} class="input-medium search-query" name="searchgridparams">
+  <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+  <input type="text" id="new-filter-search-params" placeholder="Sort by postcode" {% if sort.postcode %}value={{ sort.postcode }}{% endif %} class="input-medium search-query" name="filtername">
   <button id="submit-button" type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
 </form>	
 
@@ -70,7 +72,14 @@
 </div>
 
 {% endif %}
-
+<div>
+{% if searches %}
+<p style="display:inline-block;margin-right:30px">{{ searches.message }}</p>
+{% endif %}
+{% if sort %}
+<p style="display:inline-block">{{ sort.message }}</p>
+{% endif %}
+</div>
 </div>
 {% include "grid/table.html" %}
 </div>

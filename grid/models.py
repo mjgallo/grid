@@ -22,7 +22,7 @@ class Restaurant(geomodels.Model):
 
 class Review(geomodels.Model):
 	restaurant = geomodels.ForeignKey(Restaurant)
-	review = geomodels.CharField(max_length=160)
+	review = geomodels.CharField(max_length=1500)
 	good = geomodels.BooleanField()
 	reviewer = geomodels.ForeignKey(User, null=True)
 	last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)

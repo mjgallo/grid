@@ -36,6 +36,13 @@ class NotificationKeyManager(models.Manager):
             return notification_key
         return False
 
+    def cancelKey(self, notification_key):
+        try:
+            notification_key = self.get(key=notification_key)
+        except self.model.DoesNotExist:  
+            print 'key does not exist'
+        notification_key.key = self.model.ACTIVATED
+
     def create_notification(self, to_user, grid, from_user):
         """
         Create an ``NotificationKey`` and returns it.
