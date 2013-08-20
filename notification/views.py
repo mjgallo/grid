@@ -4,6 +4,7 @@ from custom_registration.models import UserProfile
 from grid.signals import user_invited, grid_requested
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
+from django.contrib.auth import login, authenticate
 
 cancelKey = NotificationKey.objects.cancelKey
 is_key_valid = NotificationKey.objects.is_key_valid
@@ -33,6 +34,8 @@ def confirm(request, notification_key=None):
             grid.members.add(to_user.pk)
             user_profile.approval_queue.remove(grid.pk)
             cancelKey(notification_object)
+            to_user = authenticate(username=to_user.username)
+            login(request, to_user) 
             return render_to_response('notification/success.html', {'to_user':to_user, 'from_user': from_user, 'grid':grid})
         else:
             return render_to_response('notification/failure.html', {'to_user':'test'})
@@ -60,6 +63,8 @@ def accept(request, notification_key=None):
             grid.members.add(notification_object.from_user.pk)
             grid.request_queue.remove(notification_object.from_user.pk)
             cancelKey(notification_object)
+            to_user = authenticate(username=notification_object.to_user.username)
+            login(request, to_user) 
             return render_to_response('notification/success_request.html', {'to_user':notification_object.to_user, 'from_user': notification_object.from_user, 'grid':grid})
         else:
             return render_to_response('notification/failure_request.html', {'to_user':'test'})
