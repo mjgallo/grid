@@ -117,4 +117,4 @@ class NotificationKey(models.Model):
                                    'notification_key': self.key,
                                      'site': current_site })
         
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        #send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
