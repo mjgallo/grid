@@ -5,4 +5,4 @@ http://thegridworks.com/notification/accept/{{ notification_key }}/
 Or, click "Approve requests to join" next time you log onto thegridworks.com
 
 Thanks,
-thegridworks.com team 
+thegridworks team 

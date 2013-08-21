@@ -5,4 +5,4 @@ http://thegridworks.com/notification/confirm/{{ notification_key }}/
 Or, click "Confirm invitations" next time you log onto thegridworks.com
 
 Thanks,
-thegridworks.com team 
+thegridworks team 
