@@ -166,7 +166,7 @@ $(document).on('click', '.editgrid', function() {
 	$('#updategrid').on('submit', function(e) {e.preventDefault(); return true;});
 	console.log('i am clicked');
 	$('#myModalGridUpdate').modal('toggle');
-	var current_grid = $(this).closest('div').attr('id');
+	var current_grid = $(this).closest('.overarchingdiv').attr('id');
 	$(document).on('submit', '#updategrid', function(){
 		var new_name= $('#newgridname').val();
 		console.log(new_name);
