@@ -57,7 +57,6 @@ def request_grid(request):
                                             to_founder=grid.founder,
                                             grid=grid,
                                             request=request)
-                grid.request_queue.add(request.user.pk)
             else: 
                 UserProfile.objects.get(user=request.user).approval_queue.remove(grid.pk)
                 grid.members.add(request.user.pk)
@@ -191,7 +190,6 @@ def add_friend(request):
                                             to_user=new_friend,
                                             grid=gridgroup,
                                             request=request)
-                new_friend_profile.approval_queue.add(gridgroup)
             else:
                 gridgroup.members.add(new_friend.pk)
                 gridgroup.request_queue.remove(new_friend.pk)

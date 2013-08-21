@@ -18,6 +18,7 @@ def invite(sender, to_user, grid, request, **kwargs):
     if not user_profile.approval_queue.filter(pk=grid.pk):
         print('sending')
         notification = NotificationKey.objects.create_notification(to_user, grid, request.user)
+        user_profile.approval_queue.add(gridgroup.pk)
         notification.send_to(to_user.email)
 
 def confirm(request, notification_key=None):
@@ -50,6 +51,7 @@ def request(sender, to_founder, grid, request, **kwargs):
     if not grid.request_queue.filter(pk=request.user.pk):
         print('sending')
         notification = NotificationKey.objects.create_notification(to_founder, grid, request.user)
+        grid.request_queue.add(request.user.pk)
         notification.send_to(to_founder.email)
 
 def accept(request, notification_key=None):
