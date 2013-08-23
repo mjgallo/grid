@@ -51,7 +51,14 @@ $(document).ready(function() {
         title: 'Update account information'
       }).off('hidden').on("hidden", function(e) {
             $(".popover-content").css("text-align", "start");
-    });
+        }).off('shown').on('shown', function(e) {
+            var backdrop = $('<div style="position:fixed;top:0;right:0;bottom:0;left:0;z-index:1005" />')
+                .appendTo(document.body)
+            backdrop.click(function(){
+                $("#account").popover('hide');
+                $(backdrop).remove();
+              })
+        });
 
 
     if ($.cookie("grid") != null) {

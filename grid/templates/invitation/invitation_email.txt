@@ -3,4 +3,4 @@
 http://thegridworks.com/invite/invited/{{ invitation_key }}/
 
 Thanks,
-thegridworks.com team 
+thegridworks team 
